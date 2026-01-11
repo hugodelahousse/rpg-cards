@@ -236,6 +236,40 @@
   gap: 24px;
 }
 
+.boundingBoxToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-surface);
+  border: var(--border);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  transition: transform 0.1s, box-shadow 0.1s;
+  user-select: none;
+}
+
+.boundingBoxToggle:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-md);
+}
+
+.boundingBoxToggle:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.boundingBoxToggle input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  border: var(--border);
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
 .cardWrapper {
   display: flex;
   justify-content: center;
