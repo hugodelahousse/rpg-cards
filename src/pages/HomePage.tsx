@@ -8,6 +8,7 @@ import styles from './HomePage.module.css'
 
 const TEMPLATES = [
   { id: 'daggerheart', name: 'Daggerheart', path: '/rpg-cards/templates/daggerheart.html' },
+  { id: 'spell-scroll', name: 'Spell Scroll', path: '/rpg-cards/templates/spell-scroll.html' },
 ]
 
 export default function HomePage() {
@@ -15,6 +16,7 @@ export default function HomePage() {
   const [template, setTemplate] = useState<TemplateInfo | null>(null)
   const [cards, setCards] = useState<CardData[]>([])
   const [loading, setLoading] = useState(true)
+  const [currentCard, setCurrentCard] = useState<CardData | null>(null)
 
   useEffect(() => {
     const loadTemplate = async () => {
@@ -48,6 +50,10 @@ export default function HomePage() {
 
   const handleRemoveCard = (index: number) => {
     setCards((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const handleFormChange = (data: CardData) => {
+    setCurrentCard(data)
   }
 
   return (
@@ -89,11 +95,12 @@ export default function HomePage() {
               slots={template.slots}
               onSubmit={handleAddCard}
               onImportJSON={handleImportJSON}
+              onChange={handleFormChange}
             />
           </aside>
 
           <section className={styles.preview}>
-            <CardPreview template={template} cards={cards} onRemove={handleRemoveCard} />
+            <CardPreview template={template} cards={cards} onRemove={handleRemoveCard} previewCard={currentCard} />
           </section>
         </div>
       ) : (

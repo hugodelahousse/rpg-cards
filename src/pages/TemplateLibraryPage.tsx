@@ -6,6 +6,7 @@ import styles from './TemplateLibraryPage.module.css'
 
 const BUILT_IN_TEMPLATES: BuiltInTemplate[] = [
   { id: 'daggerheart', name: 'Daggerheart', path: '/rpg-cards/templates/daggerheart.html' },
+  { id: 'spell-scroll', name: 'Spell Scroll', path: '/rpg-cards/templates/spell-scroll.html' },
 ]
 
 export function TemplateLibraryPage() {

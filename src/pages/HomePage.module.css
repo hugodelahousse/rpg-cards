@@ -1,16 +1,29 @@
 .container {
   min-height: 100vh;
-  padding: 2rem;
+  padding: 1rem;
   max-width: 1400px;
   margin: 0 auto;
 }
 
+@media (min-width: 600px) {
+  .container {
+    padding: 2rem;
+  }
+}
+
 .header {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
   background-color: var(--color-accent);
   border: var(--border);
   box-shadow: var(--shadow-lg);
+}
+
+@media (min-width: 600px) {
+  .header {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+  }
 }
 
 .headerTop {
@@ -22,17 +35,24 @@
 }
 
 .editorLink {
-  padding: 0.75rem 1.25rem;
+  padding: 0.5rem 1rem;
   background-color: var(--color-text);
   color: var(--color-surface);
   border: var(--border);
   box-shadow: var(--shadow-sm);
   font-weight: 700;
-  font-size: 0.75rem;
+  font-size: 0.625rem;
   text-transform: uppercase;
   text-decoration: none;
   transition: transform 0.1s, box-shadow 0.1s;
   white-space: nowrap;
+}
+
+@media (min-width: 600px) {
+  .editorLink {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.75rem;
+  }
 }
 
 .editorLink:hover {
@@ -46,12 +66,18 @@
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--color-text);
   margin: 0 0 0.5rem 0;
   text-transform: uppercase;
   letter-spacing: -0.02em;
+}
+
+@media (min-width: 600px) {
+  .title {
+    font-size: 2.5rem;
+  }
 }
 
 .subtitle {
@@ -62,7 +88,13 @@
 }
 
 .templateSelect {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 600px) {
+  .templateSelect {
+    margin-bottom: 2rem;
+  }
 }
 
 .templateLabel {
@@ -80,7 +112,8 @@
   border: var(--border);
   font-size: 1rem;
   font-weight: 600;
-  min-width: 250px;
+  width: 100%;
+  max-width: 300px;
   background-color: var(--color-surface);
   cursor: pointer;
   box-shadow: var(--shadow-md);
@@ -99,8 +132,15 @@
 
 .main {
   display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 2rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .main {
+    grid-template-columns: 380px 1fr;
+    gap: 2rem;
+  }
 }
 
 .sidebar {
@@ -153,8 +193,3 @@
   }
 }
 
-@media (max-width: 900px) {
-  .main {
-    grid-template-columns: 1fr;
-  }
-}

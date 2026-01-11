@@ -44,10 +44,17 @@
 
 .actions {
   display: flex;
+  flex-direction: column;
   gap: 0.75rem;
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: var(--border);
+}
+
+@media (min-width: 480px) {
+  .actions {
+    flex-direction: row;
+  }
 }
 
 .button {

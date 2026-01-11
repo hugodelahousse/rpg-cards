@@ -6,9 +6,10 @@ interface CardFormProps {
   slots: TemplateSlot[]
   onSubmit: (data: CardData) => void
   onImportJSON: (cards: CardData[]) => void
+  onChange?: (data: CardData) => void
 }
 
-export default function CardForm({ slots, onSubmit, onImportJSON }: CardFormProps) {
+export default function CardForm({ slots, onSubmit, onImportJSON, onChange }: CardFormProps) {
   const [formData, setFormData] = useState<CardData>(() => {
     const initial: CardData = {}
     slots.forEach((slot) => {
@@ -18,7 +19,9 @@ export default function CardForm({ slots, onSubmit, onImportJSON }: CardFormProp
   })
 
   const handleChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    const newData = { ...formData, [name]: value }
+    setFormData(newData)
+    onChange?.(newData)
   }
 
   const handleSubmit = (e: React.FormEvent) => {
