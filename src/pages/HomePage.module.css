@@ -1,25 +1,44 @@
 .container {
   min-height: 100vh;
-  padding: 2rem;
+  padding: 1rem;
   max-width: 1400px;
   margin: 0 auto;
 }
 
+@media (min-width: 600px) {
+  .container {
+    padding: 2rem;
+  }
+}
+
 .header {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
   background-color: var(--color-accent);
   border: var(--border);
   box-shadow: var(--shadow-lg);
 }
 
+@media (min-width: 600px) {
+  .header {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+  }
+}
+
 .title {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--color-text);
   margin: 0 0 0.5rem 0;
   text-transform: uppercase;
   letter-spacing: -0.02em;
+}
+
+@media (min-width: 600px) {
+  .title {
+    font-size: 2.5rem;
+  }
 }
 
 .subtitle {
@@ -30,7 +49,13 @@
 }
 
 .templateSelect {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 600px) {
+  .templateSelect {
+    margin-bottom: 2rem;
+  }
 }
 
 .templateLabel {
@@ -48,7 +73,8 @@
   border: var(--border);
   font-size: 1rem;
   font-weight: 600;
-  min-width: 250px;
+  width: 100%;
+  max-width: 300px;
   background-color: var(--color-surface);
   cursor: pointer;
   box-shadow: var(--shadow-md);
@@ -67,8 +93,15 @@
 
 .main {
   display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 2rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .main {
+    grid-template-columns: 380px 1fr;
+    gap: 2rem;
+  }
 }
 
 .sidebar {
@@ -121,8 +154,3 @@
   }
 }
 
-@media (max-width: 900px) {
-  .main {
-    grid-template-columns: 1fr;
-  }
-}
