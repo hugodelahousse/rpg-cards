@@ -78,4 +78,4 @@ The UI must be **mobile-friendly**. Follow these responsive design principles:
 - **Flexible layouts**: Use `grid-template-columns: 1fr` on mobile, expand to multi-column on desktop
 - **Stacked elements**: Buttons and form actions stack vertically on mobile
 - **Centered content**: Cards center on small screens, align left on larger screens
-- **No horizontal overflow**: Ensure `overflow-x: hidden` on body to prevent horizontal scrolling
+- **Prevent overflow at the source**: Use `width: 100%`, `max-width`, and flexible units to ensure components never exceed viewport width. Never use `overflow-x: hidden` to hide layout problems.
