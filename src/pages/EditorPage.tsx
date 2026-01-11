@@ -1,7 +1,8 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { CodeEditor } from '../components/CodeEditor'
 import { ConfirmModal } from '../components/Modal'
+
+const CodeEditor = lazy(() => import('../components/CodeEditor'))
 import { useLocalTemplates } from '../hooks/useLocalTemplates'
 import { parseTemplate, renderCard } from '../utils/templateParser'
 import { getDefaultTemplateHtml, createTemplate } from '../utils/templateStorage'
@@ -203,7 +204,9 @@ export function EditorPage() {
         <div
           className={`${styles.editorPane} ${activeTab === 'editor' ? styles.paneActive : ''}`}
         >
-          <CodeEditor value={html} onChange={handleHtmlChange} language="html" />
+          <Suspense fallback={<div className={styles.loading}>Loading editor...</div>}>
+            <CodeEditor value={html} onChange={handleHtmlChange} language="html" />
+          </Suspense>
         </div>
 
         {/* Preview pane */}
