@@ -118,3 +118,6 @@ export function CodeEditor({
 
   return <div ref={editorRef} className={styles.editor} />
 }
+
+// Default export for lazy loading
+export default CodeEditor

@@ -1,9 +1,9 @@
 import { Routes, Route } from 'react-router-dom'
-import HomePage from './pages/HomePage'
+import { HomePage } from './pages/HomePage'
 import { TemplateLibraryPage } from './pages/TemplateLibraryPage'
 import { EditorPage } from './pages/EditorPage'
 
-function App() {
+export function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
@@ -13,5 +13,3 @@ function App() {
     </Routes>
   )
 }
-
-export default App

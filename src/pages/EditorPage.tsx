@@ -1,11 +1,15 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { CodeEditor } from '../components/CodeEditor'
+import { ConfirmModal } from '../components/Modal'
+
+const CodeEditor = lazy(() => import('../components/CodeEditor'))
 import { useLocalTemplates } from '../hooks/useLocalTemplates'
 import { parseTemplate, renderCard } from '../utils/templateParser'
 import { getDefaultTemplateHtml, createTemplate } from '../utils/templateStorage'
+import { createDefaultCardData } from '../utils/cardData'
+import { downloadHtml } from '../utils/download'
 import type { LocalTemplate } from '../types/localTemplate'
-import type { TemplateInfo, CardData } from '../types/template'
+import type { TemplateInfo } from '../types/template'
 import styles from './EditorPage.module.css'
 
 type TabType = 'editor' | 'preview'
@@ -24,6 +28,7 @@ export function EditorPage() {
   const [templateName, setTemplateName] = useState('')
   const [showSettings, setShowSettings] = useState(false)
   const [showBoundingBoxes, setShowBoundingBoxes] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   // Load template
   useEffect(() => {
@@ -62,10 +67,7 @@ export function EditorPage() {
   // Generate preview card with default values
   const previewCardHtml = useMemo(() => {
     if (!parsedTemplate) return ''
-    const defaultData: CardData = {}
-    parsedTemplate.slots.forEach((slot) => {
-      defaultData[slot.name] = slot.defaultValue
-    })
+    const defaultData = createDefaultCardData(parsedTemplate.slots)
     return renderCard(parsedTemplate, defaultData)
   }, [parsedTemplate])
 
@@ -105,20 +107,12 @@ export function EditorPage() {
 
   const handleDelete = async () => {
     if (!template) return
-    if (confirm('Are you sure you want to delete this template?')) {
-      await remove(template.id)
-      navigate('/editor')
-    }
+    await remove(template.id)
+    navigate('/editor')
   }
 
   const handleExport = () => {
-    const blob = new Blob([html], { type: 'text/html' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${templateName || 'template'}.html`
-    a.click()
-    URL.revokeObjectURL(url)
+    downloadHtml(html, `${templateName || 'template'}.html`)
   }
 
   if (loading) {
@@ -172,12 +166,22 @@ export function EditorPage() {
             EXPORT HTML
           </button>
           {template && (
-            <button onClick={handleDelete} className={styles.deleteButton}>
+            <button onClick={() => setShowDeleteConfirm(true)} className={styles.deleteButton}>
               DELETE TEMPLATE
             </button>
           )}
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDelete}
+        title="Delete Template"
+        message="Are you sure you want to delete this template? This action cannot be undone."
+        confirmText="DELETE"
+        variant="danger"
+      />
 
       {/* Mobile tab bar */}
       <div className={styles.tabBar}>
@@ -200,7 +204,9 @@ export function EditorPage() {
         <div
           className={`${styles.editorPane} ${activeTab === 'editor' ? styles.paneActive : ''}`}
         >
-          <CodeEditor value={html} onChange={handleHtmlChange} language="html" />
+          <Suspense fallback={<div className={styles.loading}>Loading editor...</div>}>
+            <CodeEditor value={html} onChange={handleHtmlChange} language="html" />
+          </Suspense>
         </div>
 
         {/* Preview pane */}

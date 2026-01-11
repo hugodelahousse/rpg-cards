@@ -1,18 +1,21 @@
 import { useMemo } from 'react'
-import type { TemplateInfo, CardData } from '../types/template'
+import type { TemplateInfo, CardData, Card } from '../types/template'
 import { renderCard } from '../utils/templateParser'
 import styles from './CardPreview.module.css'
 
 interface CardPreviewProps {
   template: TemplateInfo
-  cards: CardData[]
-  onRemove: (index: number) => void
+  cards: Card[]
+  onRemove: (id: string) => void
   previewCard?: CardData | null
 }
 
-export default function CardPreview({ template, cards, onRemove, previewCard }: CardPreviewProps) {
+export function CardPreview({ template, cards, onRemove, previewCard }: CardPreviewProps) {
   const renderedCards = useMemo(() => {
-    return cards.map((card) => renderCard(template, card))
+    return cards.map((card) => ({
+      id: card.id,
+      html: renderCard(template, card.data),
+    }))
   }, [template, cards])
 
   const renderedPreview = useMemo(() => {
@@ -53,16 +56,16 @@ export default function CardPreview({ template, cards, onRemove, previewCard }: 
         <div className={styles.cardsSection}>
           <span className={styles.sectionLabel}>Added Cards</span>
           <div className={styles.grid}>
-            {renderedCards.map((html, index) => (
-              <div key={index} className={styles.cardWrapper}>
+            {renderedCards.map((card) => (
+              <div key={card.id} className={styles.cardWrapper}>
                 <button
                   className={styles.removeButton}
-                  onClick={() => onRemove(index)}
+                  onClick={() => onRemove(card.id)}
                   title="Remove card"
                 >
                   ×
                 </button>
-                <div dangerouslySetInnerHTML={{ __html: html }} />
+                <div dangerouslySetInnerHTML={{ __html: card.html }} />
               </div>
             ))}
           </div>

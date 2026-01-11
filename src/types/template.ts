@@ -13,3 +13,8 @@ export interface TemplateInfo {
 }
 
 export type CardData = Record<string, string>
+
+export interface Card {
+  id: string
+  data: CardData
+}
