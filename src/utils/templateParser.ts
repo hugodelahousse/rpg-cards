@@ -1,4 +1,5 @@
 import type { TemplateInfo, TemplateSlot } from '../types/template'
+import { FONT_SIZE_PREFIX } from '../types/template'
 
 export function parseTemplate(html: string): TemplateInfo {
   const parser = new DOMParser()
@@ -63,14 +64,24 @@ export function renderCard(template: TemplateInfo, data: Record<string, string>)
   const slotElements = doc.querySelectorAll('[data-slot]')
   slotElements.forEach((el) => {
     const slotName = el.getAttribute('data-slot')
-    if (!slotName || !(slotName in data)) return
+    if (!slotName) return
 
     const slotType = el.getAttribute('data-slot-type')
     const slotStyle = el.getAttribute('data-slot-style')
+    const htmlEl = el as HTMLElement
+
+    // Apply font-size override if present (only for text/html slots)
+    const fontSizeKey = `${FONT_SIZE_PREFIX}${slotName}`
+    if (fontSizeKey in data && data[fontSizeKey]) {
+      htmlEl.style.fontSize = `${data[fontSizeKey]}em`
+    }
+
+    // Skip if no value provided for this slot
+    if (!(slotName in data)) return
 
     // Handle style-based slots (e.g., data-slot-style="background-color")
     if (slotStyle) {
-      ;(el as HTMLElement).style.setProperty(slotStyle, data[slotName])
+      htmlEl.style.setProperty(slotStyle, data[slotName])
       return
     }
 
