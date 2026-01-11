@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="template-name" content="RPG Card Generator">
+  <meta name="template-description" content="Compatible with rpg-cards.vercel.app format. Supports D&D spells, monsters, items, and more.">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Alegreya+SC:wght@700&display=swap');
+
+    .card {
+      width: 63mm;
+      height: 88mm;
+      background: #fdf5e6;
+      border: 3px solid #000;
+      box-shadow: 4px 4px 0 #000;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Crimson Pro', Georgia, serif;
+      color: #1a1a1a;
+      position: relative;
+      font-size: 8pt;
+      line-height: 1.35;
+    }
+
+    .card-header {
+      padding: 2.5mm 3mm 2mm;
+      text-align: center;
+      border-bottom: 2px solid #000;
+      position: relative;
+    }
+
+    .card-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    .card-title {
+      font-family: 'Alegreya SC', serif;
+      font-size: 12pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-body {
+      flex: 1;
+      padding: 2mm 3mm;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-contents {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .card-tags {
+      font-size: 6pt;
+      color: #666;
+      text-align: center;
+      padding-top: 1.5mm;
+      margin-top: auto;
+      border-top: 1px solid #ccc;
+      font-style: italic;
+    }
+
+    /* Content type styles */
+    .rpg-subtitle {
+      font-size: 9pt;
+      font-style: italic;
+      text-align: center;
+      margin: 0 0 1.5mm;
+      display: flex;
+      justify-content: center;
+      gap: 2mm;
+    }
+
+    .rpg-right {
+      margin-left: auto;
+    }
+
+    .rpg-rule {
+      border: none;
+      border-top: 2px solid #000;
+      margin: 1.5mm 0;
+    }
+
+    .rpg-ruler {
+      border: none;
+      border-top: 1px solid #999;
+      margin: 1mm 0;
+    }
+
+    .rpg-property {
+      margin: 0 0 0.8mm;
+      text-indent: -3mm;
+      padding-left: 3mm;
+    }
+
+    .rpg-property-name {
+      font-weight: 700;
+    }
+
+    .rpg-property-value {
+      font-weight: 400;
+    }
+
+    .rpg-description {
+      margin: 0 0 1mm;
+    }
+
+    .rpg-description-name {
+      font-weight: 700;
+      font-style: italic;
+    }
+
+    .rpg-text {
+      margin: 0 0 1mm;
+    }
+
+    .rpg-section {
+      font-family: 'Alegreya SC', serif;
+      font-size: 9pt;
+      font-weight: 700;
+      margin: 1.5mm 0 1mm;
+      padding-bottom: 0.5mm;
+      border-bottom: 1px solid #000;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .rpg-boxes {
+      margin: 1mm 0;
+      display: flex;
+      align-items: center;
+      gap: 1mm;
+      flex-wrap: wrap;
+    }
+
+    .rpg-box {
+      display: inline-block;
+      border: 1.5px solid #000;
+      background: #fff;
+    }
+
+    .rpg-boxes-text {
+      margin-left: 1mm;
+    }
+
+    .rpg-stats {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1mm 0;
+      font-size: 7pt;
+      text-align: center;
+    }
+
+    .rpg-stats th {
+      font-family: 'Alegreya SC', serif;
+      font-weight: 700;
+      font-size: 7pt;
+      padding: 0.5mm;
+      border-bottom: 1px solid #000;
+    }
+
+    .rpg-stats td {
+      padding: 0.5mm;
+      font-weight: 600;
+    }
+
+    .rpg-mod {
+      font-weight: 400;
+      font-size: 6pt;
+    }
+
+    .rpg-bullet {
+      margin: 0 0 0.8mm;
+      padding-left: 3mm;
+      position: relative;
+    }
+
+    .rpg-bullet::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      font-weight: bold;
+    }
+
+    .rpg-fill {
+      min-height: 1mm;
+    }
+
+    .rpg-picture {
+      display: block;
+      max-width: 100%;
+      margin: 1mm auto;
+    }
+
+    /* Color theming via inline style */
+    .card-header[style*="background"] {
+      color: #fff;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+    }
+
+    @media print {
+      .card {
+        break-inside: avoid;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-header" data-slot="color" data-slot-style="background-color" style="background-color: #4a6898;">
+      <h1 class="card-title" data-slot="title">Card Title</h1>
+    </div>
+    <div class="card-body">
+      <div class="card-contents" data-slot="contents" data-slot-type="html">
+        <p class="rpg-subtitle">Subtitle text</p>
+        <hr class="rpg-rule" />
+        <p class="rpg-property"><strong class="rpg-property-name">Property</strong> <span class="rpg-property-value">Value</span></p>
+        <p class="rpg-text">Card content goes here...</p>
+      </div>
+      <div class="card-tags" data-slot="tags">spell, 2nd level</div>
+    </div>
+  </div>
+</body>
+</html>

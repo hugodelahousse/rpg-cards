@@ -1,15 +1,17 @@
 import { useState } from 'react'
 import type { TemplateSlot, CardData } from '../types/template'
+import { isRpgCardFormat, convertRpgCards } from '../utils/rpgCardConverter'
 import styles from './CardForm.module.css'
 
 interface CardFormProps {
   slots: TemplateSlot[]
   onSubmit: (data: CardData) => void
   onImportJSON: (cards: CardData[]) => void
+  onImportRpgCards?: (cards: CardData[]) => void
   onChange?: (data: CardData) => void
 }
 
-export default function CardForm({ slots, onSubmit, onImportJSON, onChange }: CardFormProps) {
+export default function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onChange }: CardFormProps) {
   const [formData, setFormData] = useState<CardData>(() => {
     const initial: CardData = {}
     slots.forEach((slot) => {
@@ -36,8 +38,19 @@ export default function CardForm({ slots, onSubmit, onImportJSON, onChange }: Ca
     try {
       const text = await file.text()
       const json = JSON.parse(text)
-      const cards: CardData[] = Array.isArray(json) ? json : [json]
-      onImportJSON(cards)
+
+      // Detect RPG Card Generator format
+      if (isRpgCardFormat(json)) {
+        const cards = convertRpgCards(json)
+        if (onImportRpgCards) {
+          onImportRpgCards(cards)
+        } else {
+          onImportJSON(cards)
+        }
+      } else {
+        const cards: CardData[] = Array.isArray(json) ? json : [json]
+        onImportJSON(cards)
+      }
     } catch {
       alert('Invalid JSON file')
     }
@@ -60,11 +73,15 @@ export default function CardForm({ slots, onSubmit, onImportJSON, onChange }: Ca
               onChange={(e) => handleChange(slot.name, e.target.value)}
               placeholder="Image URL"
             />
-          ) : slot.name.includes('description') || slot.name.includes('text') ? (
+          ) : slot.type === 'html' ||
+            slot.name.includes('description') ||
+            slot.name.includes('text') ||
+            slot.name.includes('contents') ? (
             <textarea
               className={styles.textarea}
               value={formData[slot.name] || ''}
               onChange={(e) => handleChange(slot.name, e.target.value)}
+              rows={slot.type === 'html' ? 8 : 3}
             />
           ) : (
             <input

@@ -22,11 +22,24 @@ export function parseTemplate(html: string): TemplateInfo {
     const slotName = el.getAttribute('data-slot')
     if (!slotName) return
 
-    const slotType = el.getAttribute('data-slot-type') === 'image' ? 'image' : 'text'
+    const slotTypeAttr = el.getAttribute('data-slot-type')
+    const slotStyle = el.getAttribute('data-slot-style')
+    let slotType: 'text' | 'image' | 'html' = 'text'
+    if (slotTypeAttr === 'image') {
+      slotType = 'image'
+    } else if (slotTypeAttr === 'html') {
+      slotType = 'html'
+    }
 
     let defaultValue = ''
-    if (slotType === 'image') {
+    if (slotStyle) {
+      // Extract default value from inline style
+      const style = (el as HTMLElement).style
+      defaultValue = style.getPropertyValue(slotStyle) || ''
+    } else if (slotType === 'image') {
       defaultValue = (el as HTMLImageElement).src || ''
+    } else if (slotType === 'html') {
+      defaultValue = el.innerHTML?.trim() || ''
     } else {
       defaultValue = el.textContent?.trim() || ''
     }
@@ -53,8 +66,18 @@ export function renderCard(template: TemplateInfo, data: Record<string, string>)
     if (!slotName || !(slotName in data)) return
 
     const slotType = el.getAttribute('data-slot-type')
+    const slotStyle = el.getAttribute('data-slot-style')
+
+    // Handle style-based slots (e.g., data-slot-style="background-color")
+    if (slotStyle) {
+      ;(el as HTMLElement).style.setProperty(slotStyle, data[slotName])
+      return
+    }
+
     if (slotType === 'image') {
       (el as HTMLImageElement).src = data[slotName]
+    } else if (slotType === 'html') {
+      el.innerHTML = data[slotName]
     } else {
       el.textContent = data[slotName]
     }
