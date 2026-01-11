@@ -83,14 +83,19 @@
   background-color: var(--color-surface);
 }
 
-.removeButton {
+.cardActions {
   position: absolute;
   top: -12px;
   right: -12px;
+  display: flex;
+  gap: 4px;
+  z-index: 10;
+}
+
+.editButton,
+.removeButton {
   width: 32px;
   height: 32px;
-  background-color: var(--color-danger);
-  color: var(--color-surface);
   border: var(--border);
   font-size: 16px;
   font-weight: 700;
@@ -98,9 +103,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;
   box-shadow: var(--shadow-sm);
   transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.editButton {
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.removeButton {
+  background-color: var(--color-danger);
+  color: var(--color-surface);
+}
+
+.editButton:hover {
+  transform: translate(1px, 1px);
+  box-shadow: var(--shadow-hover);
+  background-color: var(--color-primary-hover);
 }
 
 .removeButton:hover {
@@ -109,6 +129,7 @@
   background-color: var(--color-danger-hover);
 }
 
+.editButton:active,
 .removeButton:active {
   transform: translate(3px, 3px);
   box-shadow: var(--shadow-active);
@@ -146,7 +167,7 @@
 
 @media print {
   .header,
-  .removeButton,
+  .cardActions,
   .previewSection,
   .sectionLabel {
     display: none;

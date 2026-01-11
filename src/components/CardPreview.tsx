@@ -9,10 +9,11 @@ interface CardPreviewProps {
   cards: Card[]
   onRemove: (id: string) => void
   onUpdateCard?: (id: string, data: CardData) => void
+  onEdit?: (id: string, data: CardData) => void
   previewCard?: CardData | null
 }
 
-export function CardPreview({ template, cards, onRemove, onUpdateCard, previewCard }: CardPreviewProps) {
+export function CardPreview({ template, cards, onRemove, onUpdateCard, onEdit, previewCard }: CardPreviewProps) {
   const renderedPreview = useMemo(() => {
     if (!previewCard) return null
     return renderCard(template, previewCard)
@@ -53,13 +54,24 @@ export function CardPreview({ template, cards, onRemove, onUpdateCard, previewCa
           <div className={styles.grid}>
             {cards.map((card) => (
               <div key={card.id} className={styles.cardWrapper}>
-                <button
-                  className={styles.removeButton}
-                  onClick={() => onRemove(card.id)}
-                  title="Remove card"
-                >
-                  ×
-                </button>
+                <div className={styles.cardActions}>
+                  {onEdit && (
+                    <button
+                      className={styles.editButton}
+                      onClick={() => onEdit(card.id, card.data)}
+                      title="Edit card"
+                    >
+                      ✎
+                    </button>
+                  )}
+                  <button
+                    className={styles.removeButton}
+                    onClick={() => onRemove(card.id)}
+                    title="Remove card"
+                  >
+                    ×
+                  </button>
+                </div>
                 <InteractiveCard
                   template={template}
                   data={card.data}
