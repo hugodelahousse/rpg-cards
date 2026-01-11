@@ -7,19 +7,26 @@
 
 .header {
   margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: var(--color-accent);
+  border: var(--border);
+  box-shadow: var(--shadow-lg);
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1f2937;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--color-text);
   margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
 }
 
 .subtitle {
   font-size: 1rem;
-  color: #6b7280;
+  color: var(--color-text);
   margin: 0;
+  font-weight: 500;
 }
 
 .templateSelect {
@@ -28,38 +35,59 @@
 
 .templateLabel {
   display: block;
-  font-weight: 500;
+  font-weight: 700;
   margin-bottom: 0.5rem;
-  color: #374151;
+  color: var(--color-text);
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
 }
 
 .select {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  min-width: 200px;
+  padding: 0.75rem 1rem;
+  border: var(--border);
+  font-size: 1rem;
+  font-weight: 600;
+  min-width: 250px;
+  background-color: var(--color-surface);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.select:hover {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.select:focus {
+  outline: none;
+  background-color: var(--color-focus);
 }
 
 .main {
   display: grid;
-  grid-template-columns: 350px 1fr;
+  grid-template-columns: 380px 1fr;
   gap: 2rem;
 }
 
 .sidebar {
-  background-color: #f9fafb;
+  background-color: var(--color-surface);
   padding: 1.5rem;
-  border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
+  border: var(--border);
+  box-shadow: var(--shadow-lg);
   height: fit-content;
 }
 
 .sidebarTitle {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin: 0 0 1rem 0;
-  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0 0 1.5rem 0;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding-bottom: 0.75rem;
+  border-bottom: var(--border);
 }
 
 .preview {
@@ -67,8 +95,13 @@
 }
 
 .loading {
-  color: #6b7280;
-  font-style: italic;
+  color: var(--color-text);
+  font-weight: 600;
+  font-style: normal;
+  padding: 1rem;
+  background-color: var(--color-accent-light);
+  border: var(--border);
+  box-shadow: var(--shadow-md);
 }
 
 @media print {

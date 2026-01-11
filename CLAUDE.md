@@ -56,3 +56,15 @@ Run verification before committing:
 ```bash
 bun run typecheck && bun run lint && bun run build
 ```
+
+## Design System: Neobrutalist Style
+
+This project follows a **neobrutalist design aesthetic**. All UI changes must adhere to these principles:
+
+- **Bold borders**: Thick black borders, no rounded corners
+- **Offset shadows**: Hard-offset box shadows for depth
+- **High contrast**: Bold, saturated colors against light backgrounds
+- **Raw aesthetic**: Embrace the unpolished, structured look
+- **Typography**: Heavy font weights (600-800), uppercase for headers/buttons
+
+CSS variables for colors, shadows, and borders are defined in `src/index.css`. Use these variables instead of hardcoded values.

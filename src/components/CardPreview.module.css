@@ -1,72 +1,103 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: var(--color-surface);
+  border: var(--border);
+  box-shadow: var(--shadow-md);
 }
 
 .title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .printButton {
-  padding: 0.5rem 1rem;
-  background-color: #10b981;
-  color: white;
-  border: none;
-  border-radius: 0.375rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-success);
+  color: var(--color-surface);
+  border: var(--border);
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.1s, box-shadow 0.1s;
 }
 
 .printButton:hover {
-  background-color: #059669;
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.printButton:active {
+  transform: translate(4px, 4px);
+  box-shadow: var(--shadow-active);
 }
 
 .grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .cardWrapper {
   position: relative;
+  border: var(--border);
+  box-shadow: var(--shadow-lg);
+  background-color: var(--color-surface);
 }
 
 .removeButton {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-color: #ef4444;
-  color: white;
-  border: none;
-  font-size: 14px;
+  top: -12px;
+  right: -12px;
+  width: 32px;
+  height: 32px;
+  background-color: var(--color-danger);
+  color: var(--color-surface);
+  border: var(--border);
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.1s, box-shadow 0.1s;
 }
 
 .removeButton:hover {
-  background-color: #dc2626;
+  transform: translate(1px, 1px);
+  box-shadow: var(--shadow-hover);
+  background-color: var(--color-danger-hover);
+}
+
+.removeButton:active {
+  transform: translate(3px, 3px);
+  box-shadow: var(--shadow-active);
 }
 
 .empty {
-  color: #6b7280;
-  font-style: italic;
+  color: var(--color-text);
+  font-weight: 600;
+  padding: 2rem;
+  background-color: var(--color-surface);
+  border: var(--border-dashed);
+  text-align: center;
+  font-size: 1rem;
 }
 
 @media print {
@@ -85,5 +116,7 @@
   .cardWrapper {
     break-inside: avoid;
     page-break-inside: avoid;
+    border: none;
+    box-shadow: none;
   }
 }
