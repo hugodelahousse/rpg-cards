@@ -59,72 +59,12 @@ bun run typecheck && bun run lint && bun run build
 
 ## Design System: Neobrutalist Style
 
-This project follows a **neobrutalist design aesthetic**. All UI changes must adhere to these principles.
+This project follows a **neobrutalist design aesthetic**. All UI changes must adhere to these principles:
 
-### Core Principles
-- **Bold borders**: Use thick black borders (`var(--border)`)
-- **Offset shadows**: Hard-offset box shadows (`var(--shadow-md)`, `var(--shadow-lg)`)
-- **No rounded corners**: Use sharp edges (`border-radius: 0`) or minimal rounding
+- **Bold borders**: Thick black borders, no rounded corners
+- **Offset shadows**: Hard-offset box shadows for depth
 - **High contrast**: Bold, saturated colors against light backgrounds
 - **Raw aesthetic**: Embrace the unpolished, structured look
+- **Typography**: Heavy font weights (600-800), uppercase for headers/buttons
 
-### CSS Variables (defined in `src/index.css`)
-
-All colors and design tokens are defined as CSS variables in `:root`. Use these variables instead of hardcoded values:
-
-**Colors:**
-- `--color-background` - Page background (cream/beige)
-- `--color-surface` - Card/container backgrounds (white)
-- `--color-primary` - Primary action color (blue)
-- `--color-success` - Success/positive actions (green)
-- `--color-danger` - Danger/destructive actions (red)
-- `--color-accent` - Accent highlights (yellow)
-- `--color-accent-light` - Light accent for backgrounds
-- `--color-text` - Main text color (black)
-- `--color-border` - Border color (black)
-- `--color-neutral` - Neutral/secondary backgrounds
-- `--color-focus` - Focus state backgrounds
-
-**Shadows:**
-- `--shadow-sm` - Small shadow (3px offset)
-- `--shadow-md` - Medium shadow (4px offset)
-- `--shadow-lg` - Large shadow (6px offset)
-- `--shadow-hover` - Hover state shadow (2px offset)
-- `--shadow-active` - Active/pressed state (0px)
-
-**Borders:**
-- `--border` - Standard solid border
-- `--border-dashed` - Dashed border variant
-
-### Typography
-- Bold, heavy font weights (600-800)
-- System fonts with preference for geometric sans-serif
-- Uppercase for headers and buttons where appropriate
-
-### Interactive Elements
-- Buttons: Solid backgrounds, thick black borders, offset shadows
-- Hover states: Shadow reduction + position shift for "pressed" effect
-- Inputs: Thick black borders, no rounded corners, high contrast focus states
-
-### Example Patterns
-```css
-/* Neobrutalist button */
-.button {
-  background: var(--color-primary);
-  border: var(--border);
-  box-shadow: var(--shadow-md);
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.button:hover {
-  box-shadow: var(--shadow-hover);
-  transform: translate(2px, 2px);
-}
-
-/* Neobrutalist card/container */
-.card {
-  background: var(--color-surface);
-  border: var(--border);
-  box-shadow: var(--shadow-lg);
-}
+CSS variables for colors, shadows, and borders are defined in `src/index.css`. Use these variables instead of hardcoded values.
