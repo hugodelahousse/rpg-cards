@@ -7,6 +7,7 @@ import styles from './HomePage.module.css'
 
 const TEMPLATES = [
   { id: 'daggerheart', name: 'Daggerheart', path: '/rpg-cards/templates/daggerheart.html' },
+  { id: 'spell-scroll', name: 'Spell Scroll', path: '/rpg-cards/templates/spell-scroll.html' },
 ]
 
 export default function HomePage() {
