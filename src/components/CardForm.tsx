@@ -1,19 +1,7 @@
 import { useState } from 'react'
 import type { TemplateSlot, CardData } from '../types/template'
-import { getFontSizeKey } from '../types/template'
 import { isRpgCardFormat, convertRpgCards } from '../utils/rpgCardConverter'
 import styles from './CardForm.module.css'
-
-const FONT_SIZE_OPTIONS = [
-  { value: '', label: 'Default' },
-  { value: '0.7', label: '70%' },
-  { value: '0.8', label: '80%' },
-  { value: '0.9', label: '90%' },
-  { value: '1.1', label: '110%' },
-  { value: '1.2', label: '120%' },
-  { value: '1.3', label: '130%' },
-  { value: '1.5', label: '150%' },
-]
 
 interface CardFormProps {
   slots: TemplateSlot[]
@@ -72,39 +60,11 @@ export default function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCar
     return name.replace(/_/g, ' ').replace(/([a-z])([0-9])/g, '$1 $2')
   }
 
-  const isTextSlot = (slot: TemplateSlot) => {
-    return slot.type === 'text' || slot.type === 'html'
-  }
-
-  const renderFontSizeControl = (slot: TemplateSlot) => {
-    if (!isTextSlot(slot)) return null
-    const fontSizeKey = getFontSizeKey(slot.name)
-    return (
-      <div className={styles.fontSizeControl}>
-        <label className={styles.fontSizeLabel}>Size</label>
-        <select
-          className={styles.fontSizeSelect}
-          value={formData[fontSizeKey] || ''}
-          onChange={(e) => handleChange(fontSizeKey, e.target.value)}
-        >
-          {FONT_SIZE_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
-    )
-  }
-
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       {slots.map((slot) => (
         <div key={slot.name} className={styles.field}>
-          <div className={styles.fieldHeader}>
-            <label className={styles.label}>{formatLabel(slot.name)}</label>
-            {renderFontSizeControl(slot)}
-          </div>
+          <label className={styles.label}>{formatLabel(slot.name)}</label>
           {slot.type === 'image' ? (
             <input
               type="url"

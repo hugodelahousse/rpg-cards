@@ -10,43 +10,6 @@
   gap: 0.5rem;
 }
 
-.fieldHeader {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.fontSizeControl {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-
-.fontSizeLabel {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-text);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.fontSizeSelect {
-  padding: 0.25rem 0.5rem;
-  border: var(--border);
-  font-size: 0.75rem;
-  font-weight: 600;
-  background-color: var(--color-surface);
-  cursor: pointer;
-  min-width: 70px;
-}
-
-.fontSizeSelect:focus {
-  outline: none;
-  background-color: var(--color-focus);
-}
-
 .label {
   font-weight: 700;
   font-size: 0.875rem;
