@@ -1,5 +1,6 @@
 import type { TemplateInfo, TemplateSlot } from '../types/template'
 import { FONT_SIZE_PREFIX } from '../types/template'
+import { renderMarkdown } from './markdown'
 
 export function parseTemplate(html: string): TemplateInfo {
   const parser = new DOMParser()
@@ -25,6 +26,7 @@ export function parseTemplate(html: string): TemplateInfo {
 
     const slotTypeAttr = el.getAttribute('data-slot-type')
     const slotStyle = el.getAttribute('data-slot-style')
+    const multiline = el.hasAttribute('data-slot-multiline')
     let slotType: 'text' | 'image' | 'html' = 'text'
     if (slotTypeAttr === 'image') {
       slotType = 'image'
@@ -47,7 +49,7 @@ export function parseTemplate(html: string): TemplateInfo {
 
     // Avoid duplicates
     if (!slots.find((s) => s.name === slotName)) {
-      slots.push({ name: slotName, type: slotType, defaultValue })
+      slots.push({ name: slotName, type: slotType, defaultValue, multiline })
     }
   })
 
@@ -90,7 +92,8 @@ export function renderCard(template: TemplateInfo, data: Record<string, string>)
     } else if (slotType === 'html') {
       el.innerHTML = data[slotName]
     } else {
-      el.textContent = data[slotName]
+      // Text slots support markdown
+      el.innerHTML = renderMarkdown(data[slotName])
     }
   })
 
