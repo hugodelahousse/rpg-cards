@@ -89,11 +89,7 @@
       color: #1a1a1a;
     }
 
-    .ability {
-      margin-bottom: 1.5mm;
-    }
-
-    .ability-name {
+    .card-abilities strong {
       font-weight: 600;
       font-style: italic;
     }
@@ -151,16 +147,9 @@
       <p class="card-description" data-slot="description">
         Card description goes here. This is italic flavor text that describes the card.
       </p>
-      <div class="card-abilities">
-        <p class="ability">
-          <span class="ability-name" data-slot="ability1_name">Ability Name:</span>
-          <span data-slot="ability1_text">Ability description and effects go here.</span>
-        </p>
-        <p class="ability">
-          <span class="ability-name" data-slot="ability2_name">Second Ability:</span>
-          <span data-slot="ability2_text">Another ability description goes here.</span>
-        </p>
-      </div>
+      <div class="card-abilities" data-slot="abilities">**Ability Name:** Ability description and effects go here.
+
+**Second Ability:** Another ability description goes here.</div>
       <div class="card-footer">
         <span class="artist-credit">
           <span class="pen-icon"></span>
