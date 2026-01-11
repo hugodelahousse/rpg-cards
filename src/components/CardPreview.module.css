@@ -124,9 +124,31 @@
   font-size: 1rem;
 }
 
+.previewSection,
+.cardsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.previewLabel,
+.sectionLabel {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.previewLabel {
+  color: var(--color-primary);
+}
+
 @media print {
   .header,
-  .removeButton {
+  .removeButton,
+  .previewSection,
+  .sectionLabel {
     display: none;
   }
 

@@ -7,12 +7,18 @@ interface CardPreviewProps {
   template: TemplateInfo
   cards: CardData[]
   onRemove: (index: number) => void
+  previewCard?: CardData | null
 }
 
-export default function CardPreview({ template, cards, onRemove }: CardPreviewProps) {
+export default function CardPreview({ template, cards, onRemove, previewCard }: CardPreviewProps) {
   const renderedCards = useMemo(() => {
     return cards.map((card) => renderCard(template, card))
   }, [template, cards])
+
+  const renderedPreview = useMemo(() => {
+    if (!previewCard) return null
+    return renderCard(template, previewCard)
+  }, [template, previewCard])
 
   const handlePrint = () => {
     window.print()
@@ -32,24 +38,40 @@ export default function CardPreview({ template, cards, onRemove }: CardPreviewPr
       {/* Inject template CSS */}
       <style>{template.css}</style>
 
-      <div className={styles.grid}>
-        {renderedCards.length === 0 ? (
-          <p className={styles.empty}>No cards yet. Fill out the form to add cards.</p>
-        ) : (
-          renderedCards.map((html, index) => (
-            <div key={index} className={styles.cardWrapper}>
-              <button
-                className={styles.removeButton}
-                onClick={() => onRemove(index)}
-                title="Remove card"
-              >
-                ×
-              </button>
-              <div dangerouslySetInnerHTML={{ __html: html }} />
+      {renderedPreview && (
+        <div className={styles.previewSection}>
+          <span className={styles.previewLabel}>Live Preview</span>
+          <div className={styles.grid}>
+            <div className={styles.cardWrapper}>
+              <div dangerouslySetInnerHTML={{ __html: renderedPreview }} />
             </div>
-          ))
-        )}
-      </div>
+          </div>
+        </div>
+      )}
+
+      {renderedCards.length > 0 && (
+        <div className={styles.cardsSection}>
+          <span className={styles.sectionLabel}>Added Cards</span>
+          <div className={styles.grid}>
+            {renderedCards.map((html, index) => (
+              <div key={index} className={styles.cardWrapper}>
+                <button
+                  className={styles.removeButton}
+                  onClick={() => onRemove(index)}
+                  title="Remove card"
+                >
+                  ×
+                </button>
+                <div dangerouslySetInnerHTML={{ __html: html }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!renderedPreview && renderedCards.length === 0 && (
+        <p className={styles.empty}>No cards yet. Fill out the form to add cards.</p>
+      )}
     </div>
   )
 }
