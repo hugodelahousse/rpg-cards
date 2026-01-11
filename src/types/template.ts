@@ -1,6 +1,6 @@
 export interface TemplateSlot {
   name: string
-  type: 'text' | 'image'
+  type: 'text' | 'image' | 'html'
   defaultValue: string
 }
 

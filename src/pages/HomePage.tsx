@@ -11,7 +11,10 @@ import styles from './HomePage.module.css'
 const BUILT_IN_TEMPLATES: BuiltInTemplate[] = [
   { id: 'daggerheart', name: 'Daggerheart', path: '/rpg-cards/templates/daggerheart.html' },
   { id: 'spell-scroll', name: 'Spell Scroll', path: '/rpg-cards/templates/spell-scroll.html' },
+  { id: 'rpg-card', name: 'RPG Card Generator', path: '/rpg-cards/templates/rpg-card.html' },
 ]
+
+const RPG_CARD_TEMPLATE_ID = 'rpg-card'
 
 export default function HomePage() {
   const [selectedTemplate, setSelectedTemplate] = useState(BUILT_IN_TEMPLATES[0].id)
@@ -19,6 +22,7 @@ export default function HomePage() {
   const [cards, setCards] = useState<CardData[]>([])
   const [loading, setLoading] = useState(true)
   const [currentCard, setCurrentCard] = useState<CardData | null>(null)
+  const [pendingRpgCards, setPendingRpgCards] = useState<CardData[] | null>(null)
 
   const { templates: localTemplates, loading: localLoading, getTemplate } = useLocalTemplates()
 
@@ -58,7 +62,13 @@ export default function HomePage() {
         }
         const parsed = parseTemplate(html)
         setTemplate(parsed)
-        setCards([])
+        // If there are pending RPG cards, add them after template loads
+        if (pendingRpgCards && selectedTemplate === RPG_CARD_TEMPLATE_ID) {
+          setCards(pendingRpgCards)
+          setPendingRpgCards(null)
+        } else {
+          setCards([])
+        }
       } catch (error) {
         console.error('Failed to load template:', error)
       } finally {
@@ -69,7 +79,7 @@ export default function HomePage() {
     if (!localLoading) {
       loadTemplate()
     }
-  }, [selectedTemplate, allTemplates, localLoading, getTemplate])
+  }, [selectedTemplate, allTemplates, localLoading, getTemplate, pendingRpgCards])
 
   const handleAddCard = (data: CardData) => {
     setCards((prev) => [...prev, data])
@@ -77,6 +87,17 @@ export default function HomePage() {
 
   const handleImportJSON = (importedCards: CardData[]) => {
     setCards((prev) => [...prev, ...importedCards])
+  }
+
+  const handleImportRpgCards = (importedCards: CardData[]) => {
+    // Switch to RPG Card template if not already selected
+    if (selectedTemplate !== RPG_CARD_TEMPLATE_ID) {
+      setSelectedTemplate(RPG_CARD_TEMPLATE_ID)
+      // Cards will be set after template loads
+      setPendingRpgCards(importedCards)
+    } else {
+      setCards((prev) => [...prev, ...importedCards])
+    }
   }
 
   const handleRemoveCard = (index: number) => {
@@ -138,6 +159,7 @@ export default function HomePage() {
               slots={template.slots}
               onSubmit={handleAddCard}
               onImportJSON={handleImportJSON}
+              onImportRpgCards={handleImportRpgCards}
               onChange={handleFormChange}
             />
           </aside>
