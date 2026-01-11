@@ -6,12 +6,21 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.5rem;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
   background-color: var(--color-surface);
   border: var(--border);
   box-shadow: var(--shadow-md);
+}
+
+@media (min-width: 480px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+  }
 }
 
 .title {
@@ -34,6 +43,13 @@
   letter-spacing: 0.05em;
   box-shadow: var(--shadow-md);
   transition: transform 0.1s, box-shadow 0.1s;
+  width: 100%;
+}
+
+@media (min-width: 480px) {
+  .printButton {
+    width: auto;
+  }
 }
 
 .printButton:hover {
@@ -49,7 +65,15 @@
 .grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: 1rem;
+  justify-content: center;
+}
+
+@media (min-width: 600px) {
+  .grid {
+    gap: 1.5rem;
+    justify-content: flex-start;
+  }
 }
 
 .cardWrapper {
@@ -100,9 +124,31 @@
   font-size: 1rem;
 }
 
+.previewSection,
+.cardsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.previewLabel,
+.sectionLabel {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.previewLabel {
+  color: var(--color-primary);
+}
+
 @media print {
   .header,
-  .removeButton {
+  .removeButton,
+  .previewSection,
+  .sectionLabel {
     display: none;
   }
 

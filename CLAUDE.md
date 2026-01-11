@@ -68,3 +68,14 @@ This project follows a **neobrutalist design aesthetic**. All UI changes must ad
 - **Typography**: Heavy font weights (600-800), uppercase for headers/buttons
 
 CSS variables for colors, shadows, and borders are defined in `src/index.css`. Use these variables instead of hardcoded values.
+
+## Responsive Design
+
+The UI must be **mobile-friendly**. Follow these responsive design principles:
+
+- **Mobile-first approach**: Default styles target mobile, use `min-width` media queries for larger screens
+- **Breakpoints**: 480px (small), 600px (medium), 900px (large)
+- **Flexible layouts**: Use `grid-template-columns: 1fr` on mobile, expand to multi-column on desktop
+- **Stacked elements**: Buttons and form actions stack vertically on mobile
+- **Centered content**: Cards center on small screens, align left on larger screens
+- **Prevent overflow at the source**: Use `width: 100%`, `max-width`, and flexible units to ensure components never exceed viewport width. Never use `overflow-x: hidden` to hide layout problems.
