@@ -5,7 +5,6 @@ export interface LocalTemplate {
   html: string
   createdAt: number
   updatedAt: number
-  isBuiltIn?: boolean
 }
 
 export interface BuiltInTemplate {

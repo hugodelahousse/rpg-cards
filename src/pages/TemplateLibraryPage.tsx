@@ -1,13 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useLocalTemplates } from '../hooks/useLocalTemplates'
+import { BUILT_IN_TEMPLATES } from '../constants/templates'
+import { formatDate } from '../utils/formatting'
 import type { BuiltInTemplate } from '../types/localTemplate'
 import styles from './TemplateLibraryPage.module.css'
-
-const BUILT_IN_TEMPLATES: BuiltInTemplate[] = [
-  { id: 'daggerheart', name: 'Daggerheart', path: '/rpg-cards/templates/daggerheart.html' },
-  { id: 'spell-scroll', name: 'Spell Scroll', path: '/rpg-cards/templates/spell-scroll.html' },
-]
 
 export function TemplateLibraryPage() {
   const navigate = useNavigate()
@@ -50,14 +47,6 @@ export function TemplateLibraryPage() {
       setImporting(false)
       e.target.value = ''
     }
-  }
-
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString(undefined, {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
   }
 
   return (

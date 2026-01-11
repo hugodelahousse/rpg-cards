@@ -1,28 +1,21 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import type { TemplateInfo, CardData } from '../types/template'
-import type { BuiltInTemplate } from '../types/localTemplate'
+import type { TemplateInfo, CardData, Card } from '../types/template'
 import { parseTemplate } from '../utils/templateParser'
 import { useLocalTemplates } from '../hooks/useLocalTemplates'
-import CardForm from '../components/CardForm'
-import CardPreview from '../components/CardPreview'
+import { BUILT_IN_TEMPLATES, RPG_CARD_TEMPLATE_ID } from '../constants/templates'
+import { generateCardId } from '../utils/cardData'
+import { CardForm } from '../components/CardForm'
+import { CardPreview } from '../components/CardPreview'
 import styles from './HomePage.module.css'
 
-const BUILT_IN_TEMPLATES: BuiltInTemplate[] = [
-  { id: 'daggerheart', name: 'Daggerheart', path: '/rpg-cards/templates/daggerheart.html' },
-  { id: 'spell-scroll', name: 'Spell Scroll', path: '/rpg-cards/templates/spell-scroll.html' },
-  { id: 'rpg-card', name: 'RPG Card Generator', path: '/rpg-cards/templates/rpg-card.html' },
-]
-
-const RPG_CARD_TEMPLATE_ID = 'rpg-card'
-
-export default function HomePage() {
+export function HomePage() {
   const [selectedTemplate, setSelectedTemplate] = useState(BUILT_IN_TEMPLATES[0].id)
   const [template, setTemplate] = useState<TemplateInfo | null>(null)
-  const [cards, setCards] = useState<CardData[]>([])
+  const [cards, setCards] = useState<Card[]>([])
   const [loading, setLoading] = useState(true)
   const [currentCard, setCurrentCard] = useState<CardData | null>(null)
-  const [pendingRpgCards, setPendingRpgCards] = useState<CardData[] | null>(null)
+  const [pendingRpgCards, setPendingRpgCards] = useState<Card[] | null>(null)
 
   const { templates: localTemplates, loading: localLoading, getTemplate } = useLocalTemplates()
 
@@ -82,26 +75,28 @@ export default function HomePage() {
   }, [selectedTemplate, allTemplates, localLoading, getTemplate, pendingRpgCards])
 
   const handleAddCard = (data: CardData) => {
-    setCards((prev) => [...prev, data])
+    setCards((prev) => [...prev, { id: generateCardId(), data }])
   }
 
   const handleImportJSON = (importedCards: CardData[]) => {
-    setCards((prev) => [...prev, ...importedCards])
+    const newCards = importedCards.map((data) => ({ id: generateCardId(), data }))
+    setCards((prev) => [...prev, ...newCards])
   }
 
   const handleImportRpgCards = (importedCards: CardData[]) => {
+    const newCards = importedCards.map((data) => ({ id: generateCardId(), data }))
     // Switch to RPG Card template if not already selected
     if (selectedTemplate !== RPG_CARD_TEMPLATE_ID) {
       setSelectedTemplate(RPG_CARD_TEMPLATE_ID)
       // Cards will be set after template loads
-      setPendingRpgCards(importedCards)
+      setPendingRpgCards(newCards)
     } else {
-      setCards((prev) => [...prev, ...importedCards])
+      setCards((prev) => [...prev, ...newCards])
     }
   }
 
-  const handleRemoveCard = (index: number) => {
-    setCards((prev) => prev.filter((_, i) => i !== index))
+  const handleRemoveCard = (id: string) => {
+    setCards((prev) => prev.filter((card) => card.id !== id))
   }
 
   const handleFormChange = (data: CardData) => {

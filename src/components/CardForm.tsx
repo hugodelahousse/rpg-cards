@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import type { TemplateSlot, CardData } from '../types/template'
 import { isRpgCardFormat, convertRpgCards } from '../utils/rpgCardConverter'
+import { AlertModal } from './Modal'
+import { formatSlotLabel } from '../utils/formatting'
+import { createDefaultCardData } from '../utils/cardData'
 import styles from './CardForm.module.css'
 
 interface CardFormProps {
@@ -11,14 +14,9 @@ interface CardFormProps {
   onChange?: (data: CardData) => void
 }
 
-export default function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onChange }: CardFormProps) {
-  const [formData, setFormData] = useState<CardData>(() => {
-    const initial: CardData = {}
-    slots.forEach((slot) => {
-      initial[slot.name] = slot.defaultValue
-    })
-    return initial
-  })
+export function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onChange }: CardFormProps) {
+  const [formData, setFormData] = useState<CardData>(() => createDefaultCardData(slots))
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const handleChange = (name: string, value: string) => {
     const newData = { ...formData, [name]: value }
@@ -52,19 +50,22 @@ export default function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCar
         onImportJSON(cards)
       }
     } catch {
-      alert('Invalid JSON file')
+      setErrorMessage('Invalid JSON file. Please check the file format and try again.')
     }
-  }
-
-  const formatLabel = (name: string) => {
-    return name.replace(/_/g, ' ').replace(/([a-z])([0-9])/g, '$1 $2')
   }
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
+      <AlertModal
+        isOpen={errorMessage !== null}
+        onClose={() => setErrorMessage(null)}
+        title="Import Error"
+        message={errorMessage || ''}
+      />
+
       {slots.map((slot) => (
         <div key={slot.name} className={styles.field}>
-          <label className={styles.label}>{formatLabel(slot.name)}</label>
+          <label className={styles.label}>{formatSlotLabel(slot.name)}</label>
           {slot.type === 'image' ? (
             <input
               type="url"
