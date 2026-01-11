@@ -2,7 +2,8 @@
 
 A web application for generating printable cards using customizable HTML templates.
 
-> **Disclaimer**: This project is 100% vibe coded using [Claude Code](https://claude.ai/code) on the web. Not bringing my laptop on vacation wasn't going to stop me from working on this project.
+> [!NOTE]
+> This project is 100% vibe coded using [Claude Code](https://claude.ai/code) on the web. Not bringing my laptop on vacation wasn't going to stop me from working on this project.
 
 ## Overview
 
