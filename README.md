@@ -90,3 +90,6 @@ This app is configured for static deployment on GitHub Pages. The build process 
 ## License
 
 MIT
+
+---
+*Deployed via GitHub Actions*
