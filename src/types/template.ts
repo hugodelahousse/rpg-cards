@@ -18,6 +18,11 @@ export interface TemplateInfo {
  */
 export type CardData = Record<string, string>
 
+export interface Card {
+  id: string
+  data: CardData
+}
+
 /** Prefix for font size keys in CardData */
 export const FONT_SIZE_PREFIX = '__fontSize__'
 

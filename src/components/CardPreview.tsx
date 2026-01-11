@@ -1,18 +1,18 @@
 import { useMemo } from 'react'
-import type { TemplateInfo, CardData } from '../types/template'
+import type { TemplateInfo, CardData, Card } from '../types/template'
 import { renderCard } from '../utils/templateParser'
 import InteractiveCard from './InteractiveCard'
 import styles from './CardPreview.module.css'
 
 interface CardPreviewProps {
   template: TemplateInfo
-  cards: CardData[]
-  onRemove: (index: number) => void
-  onUpdateCard?: (index: number, data: CardData) => void
+  cards: Card[]
+  onRemove: (id: string) => void
+  onUpdateCard?: (id: string, data: CardData) => void
   previewCard?: CardData | null
 }
 
-export default function CardPreview({ template, cards, onRemove, onUpdateCard, previewCard }: CardPreviewProps) {
+export function CardPreview({ template, cards, onRemove, onUpdateCard, previewCard }: CardPreviewProps) {
   const renderedPreview = useMemo(() => {
     if (!previewCard) return null
     return renderCard(template, previewCard)
@@ -51,19 +51,19 @@ export default function CardPreview({ template, cards, onRemove, onUpdateCard, p
         <div className={styles.cardsSection}>
           <span className={styles.sectionLabel}>Added Cards</span>
           <div className={styles.grid}>
-            {cards.map((card, index) => (
-              <div key={index} className={styles.cardWrapper}>
+            {cards.map((card) => (
+              <div key={card.id} className={styles.cardWrapper}>
                 <button
                   className={styles.removeButton}
-                  onClick={() => onRemove(index)}
+                  onClick={() => onRemove(card.id)}
                   title="Remove card"
                 >
                   ×
                 </button>
                 <InteractiveCard
                   template={template}
-                  data={card}
-                  onUpdate={onUpdateCard ? (data) => onUpdateCard(index, data) : undefined}
+                  data={card.data}
+                  onUpdate={onUpdateCard ? (data) => onUpdateCard(card.id, data) : undefined}
                   showControls={!!onUpdateCard}
                 />
               </div>

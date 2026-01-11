@@ -45,7 +45,7 @@ export async function createTemplate(
   description: string,
   html: string
 ): Promise<LocalTemplate> {
-  const id = `template-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+  const id = crypto.randomUUID()
   const now = Date.now()
   const template: LocalTemplate = {
     id,
@@ -70,10 +70,6 @@ export async function cloneTemplate(
   description: string
 ): Promise<LocalTemplate> {
   return createTemplate(newName, description, sourceHtml)
-}
-
-export function generateTemplateId(): string {
-  return `template-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 }
 
 const DEFAULT_TEMPLATE_HTML = `<!DOCTYPE html>
