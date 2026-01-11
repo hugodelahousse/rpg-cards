@@ -23,6 +23,7 @@ export function EditorPage() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const [templateName, setTemplateName] = useState('')
   const [showSettings, setShowSettings] = useState(false)
+  const [showBoundingBoxes, setShowBoundingBoxes] = useState(false)
 
   // Load template
   useEffect(() => {
@@ -207,9 +208,40 @@ export function EditorPage() {
           className={`${styles.previewPane} ${activeTab === 'preview' ? styles.paneActive : ''}`}
         >
           <div className={styles.previewContent}>
+            <label className={styles.boundingBoxToggle}>
+              <input
+                type="checkbox"
+                checked={showBoundingBoxes}
+                onChange={(e) => setShowBoundingBoxes(e.target.checked)}
+              />
+              <span>SHOW SLOT BOUNDING BOXES</span>
+            </label>
             {parsedTemplate ? (
               <>
                 <style>{parsedTemplate.css}</style>
+                {showBoundingBoxes && (
+                  <style>{`
+                    [data-slot] {
+                      outline: 2px dashed #e63946 !important;
+                      outline-offset: 2px;
+                      position: relative;
+                    }
+                    [data-slot]::after {
+                      content: attr(data-slot);
+                      position: absolute;
+                      top: -18px;
+                      left: 0;
+                      background: #e63946;
+                      color: white;
+                      font-size: 10px;
+                      font-weight: 700;
+                      padding: 1px 4px;
+                      font-family: 'Fira Code', monospace;
+                      white-space: nowrap;
+                      z-index: 1000;
+                    }
+                  `}</style>
+                )}
                 <div
                   className={styles.cardWrapper}
                   dangerouslySetInnerHTML={{ __html: previewCardHtml }}
