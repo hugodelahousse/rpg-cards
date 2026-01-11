@@ -1,0 +1,15 @@
+.editor {
+  height: 100%;
+  width: 100%;
+  border: var(--border);
+  background: #282c34;
+  overflow: hidden;
+}
+
+.editor :global(.cm-editor) {
+  height: 100%;
+}
+
+.editor :global(.cm-focused) {
+  outline: none;
+}

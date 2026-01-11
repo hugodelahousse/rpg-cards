@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import type { TemplateInfo, CardData } from '../types/template'
 import { parseTemplate } from '../utils/templateParser'
 import CardForm from '../components/CardForm'
@@ -52,8 +53,15 @@ export default function HomePage() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.title}>RPG Cards</h1>
-        <p className={styles.subtitle}>Create printable cards using customizable templates</p>
+        <div className={styles.headerTop}>
+          <div>
+            <h1 className={styles.title}>RPG Cards</h1>
+            <p className={styles.subtitle}>Create printable cards using customizable templates</p>
+          </div>
+          <Link to="/editor" className={styles.editorLink}>
+            TEMPLATE EDITOR
+          </Link>
+        </div>
       </header>
 
       <div className={styles.templateSelect}>
