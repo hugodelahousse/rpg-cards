@@ -10,6 +10,7 @@ export interface TemplateInfo {
   html: string
   css: string
   slots: TemplateSlot[]
+  autoSwitchFormat?: string
 }
 
 export type CardData = Record<string, string>

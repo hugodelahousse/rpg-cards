@@ -7,8 +7,10 @@ export function parseTemplate(html: string): TemplateInfo {
   // Extract metadata
   const nameMeta = doc.querySelector('meta[name="template-name"]')
   const descMeta = doc.querySelector('meta[name="template-description"]')
+  const autoSwitchMeta = doc.querySelector('meta[name="template-auto-switch-format"]')
   const name = nameMeta?.getAttribute('content') || 'Unnamed Template'
   const description = descMeta?.getAttribute('content') || ''
+  const autoSwitchFormat = autoSwitchMeta?.getAttribute('content') || undefined
 
   // Extract CSS
   const styleElement = doc.querySelector('style')
@@ -53,7 +55,7 @@ export function parseTemplate(html: string): TemplateInfo {
   // Extract body content (the card HTML)
   const bodyContent = doc.body.innerHTML
 
-  return { name, description, html: bodyContent, css, slots }
+  return { name, description, html: bodyContent, css, slots, autoSwitchFormat }
 }
 
 export function renderCard(template: TemplateInfo, data: Record<string, string>): string {

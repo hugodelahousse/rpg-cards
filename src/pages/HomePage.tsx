@@ -9,9 +9,9 @@ import CardPreview from '../components/CardPreview'
 import styles from './HomePage.module.css'
 
 const BUILT_IN_TEMPLATES: BuiltInTemplate[] = [
+  { id: 'rpg-card', name: 'RPG Card Generator', path: '/rpg-cards/templates/rpg-card.html' },
   { id: 'daggerheart', name: 'Daggerheart', path: '/rpg-cards/templates/daggerheart.html' },
   { id: 'spell-scroll', name: 'Spell Scroll', path: '/rpg-cards/templates/spell-scroll.html' },
-  { id: 'rpg-card', name: 'RPG Card Generator', path: '/rpg-cards/templates/rpg-card.html' },
 ]
 
 const RPG_CARD_TEMPLATE_ID = 'rpg-card'
@@ -63,7 +63,7 @@ export default function HomePage() {
         const parsed = parseTemplate(html)
         setTemplate(parsed)
         // If there are pending RPG cards, add them after template loads
-        if (pendingRpgCards && selectedTemplate === RPG_CARD_TEMPLATE_ID) {
+        if (pendingRpgCards && parsed.autoSwitchFormat === 'rpg-card-generator') {
           setCards(pendingRpgCards)
           setPendingRpgCards(null)
         } else {
@@ -90,13 +90,15 @@ export default function HomePage() {
   }
 
   const handleImportRpgCards = (importedCards: CardData[]) => {
-    // Switch to RPG Card template if not already selected
-    if (selectedTemplate !== RPG_CARD_TEMPLATE_ID) {
+    // Only switch templates if current template doesn't support RPG Card Generator format
+    if (template?.autoSwitchFormat === 'rpg-card-generator') {
+      // Current template supports this format, just import the cards
+      setCards((prev) => [...prev, ...importedCards])
+    } else {
+      // Switch to RPG Card template
       setSelectedTemplate(RPG_CARD_TEMPLATE_ID)
       // Cards will be set after template loads
       setPendingRpgCards(importedCards)
-    } else {
-      setCards((prev) => [...prev, ...importedCards])
     }
   }
 
