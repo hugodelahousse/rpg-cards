@@ -16,6 +16,7 @@ export function HomePage() {
   const [loading, setLoading] = useState(true)
   const [currentCard, setCurrentCard] = useState<CardData | null>(null)
   const [pendingRpgCards, setPendingRpgCards] = useState<Card[] | null>(null)
+  const [editingCard, setEditingCard] = useState<{ id: string; data: CardData } | null>(null)
 
   const { templates: localTemplates, loading: localLoading, getTemplate } = useLocalTemplates()
 
@@ -75,7 +76,22 @@ export function HomePage() {
   }, [selectedTemplate, allTemplates, localLoading, getTemplate, pendingRpgCards])
 
   const handleAddCard = (data: CardData) => {
-    setCards((prev) => [...prev, { id: generateCardId(), data }])
+    if (editingCard) {
+      // Update existing card
+      setCards((prev) => prev.map((card) => (card.id === editingCard.id ? { ...card, data } : card)))
+      setEditingCard(null)
+    } else {
+      // Add new card
+      setCards((prev) => [...prev, { id: generateCardId(), data }])
+    }
+  }
+
+  const handleEditCard = (id: string, data: CardData) => {
+    setEditingCard({ id, data })
+  }
+
+  const handleCancelEdit = () => {
+    setEditingCard(null)
   }
 
   const handleImportJSON = (importedCards: CardData[]) => {
@@ -160,11 +176,13 @@ export function HomePage() {
               onImportJSON={handleImportJSON}
               onImportRpgCards={handleImportRpgCards}
               onChange={handleFormChange}
+              editingCard={editingCard}
+              onCancelEdit={handleCancelEdit}
             />
           </aside>
 
           <section className={styles.preview}>
-            <CardPreview template={template} cards={cards} onRemove={handleRemoveCard} onUpdateCard={handleUpdateCard} previewCard={currentCard} />
+            <CardPreview template={template} cards={cards} onRemove={handleRemoveCard} onUpdateCard={handleUpdateCard} onEdit={handleEditCard} previewCard={currentCard} />
           </section>
         </div>
       ) : (

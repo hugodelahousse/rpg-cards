@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { TemplateSlot, CardData } from '../types/template'
 import { isRpgCardFormat, convertRpgCards } from '../utils/rpgCardConverter'
 import { AlertModal } from './Modal'
@@ -6,17 +6,32 @@ import { formatSlotLabel } from '../utils/formatting'
 import { createDefaultCardData } from '../utils/cardData'
 import styles from './CardForm.module.css'
 
+interface EditingCard {
+  id: string
+  data: CardData
+}
+
 interface CardFormProps {
   slots: TemplateSlot[]
   onSubmit: (data: CardData) => void
   onImportJSON: (cards: CardData[]) => void
   onImportRpgCards?: (cards: CardData[]) => void
   onChange?: (data: CardData) => void
+  editingCard?: EditingCard | null
+  onCancelEdit?: () => void
 }
 
-export function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onChange }: CardFormProps) {
+export function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onChange, editingCard, onCancelEdit }: CardFormProps) {
   const [formData, setFormData] = useState<CardData>(() => createDefaultCardData(slots))
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (editingCard) {
+      setFormData(editingCard.data)
+      onChange?.(editingCard.data)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingCard])
 
   const handleChange = (name: string, value: string) => {
     const newData = { ...formData, [name]: value }
@@ -27,6 +42,19 @@ export function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onCh
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     onSubmit(formData)
+    if (!editingCard) {
+      // Reset form to defaults after adding a new card
+      const defaultData = createDefaultCardData(slots)
+      setFormData(defaultData)
+      onChange?.(defaultData)
+    }
+  }
+
+  const handleCancelEdit = () => {
+    const defaultData = createDefaultCardData(slots)
+    setFormData(defaultData)
+    onChange?.(defaultData)
+    onCancelEdit?.()
   }
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,6 +82,18 @@ export function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onCh
     }
   }
 
+  const handleImageFileChange = (slotName: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      const dataUrl = reader.result as string
+      handleChange(slotName, dataUrl)
+    }
+    reader.readAsDataURL(file)
+  }
+
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <AlertModal
@@ -67,13 +107,29 @@ export function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onCh
         <div key={slot.name} className={styles.field}>
           <label className={styles.label}>{formatSlotLabel(slot.name)}</label>
           {slot.type === 'image' ? (
-            <input
-              type="url"
-              className={styles.input}
-              value={formData[slot.name] || ''}
-              onChange={(e) => handleChange(slot.name, e.target.value)}
-              placeholder="Image URL"
-            />
+            <div className={styles.imageInputGroup}>
+              <input
+                type="url"
+                className={styles.input}
+                value={formData[slot.name]?.startsWith('data:') ? '' : formData[slot.name] || ''}
+                onChange={(e) => handleChange(slot.name, e.target.value)}
+                placeholder="Image URL"
+              />
+              <span className={styles.imageInputOr}>or</span>
+              <input
+                type="file"
+                accept="image/*"
+                className={styles.fileInput}
+                onChange={handleImageFileChange(slot.name)}
+              />
+              {formData[slot.name] && (
+                <img
+                  src={formData[slot.name]}
+                  alt="Preview"
+                  className={styles.imagePreview}
+                />
+              )}
+            </div>
           ) : slot.type === 'html' || slot.multiline ? (
             <textarea
               className={styles.textarea}
@@ -94,8 +150,17 @@ export function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onCh
 
       <div className={styles.actions}>
         <button type="submit" className={`${styles.button} ${styles.buttonPrimary}`}>
-          Add Card
+          {editingCard ? 'Update Card' : 'Add Card'}
         </button>
+        {editingCard && (
+          <button
+            type="button"
+            className={`${styles.button} ${styles.buttonSecondary}`}
+            onClick={handleCancelEdit}
+          >
+            Cancel
+          </button>
+        )}
       </div>
 
       <div className={styles.field}>
