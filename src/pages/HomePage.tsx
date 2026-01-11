@@ -99,6 +99,10 @@ export function HomePage() {
     setCards((prev) => prev.filter((card) => card.id !== id))
   }
 
+  const handleUpdateCard = (id: string, data: CardData) => {
+    setCards((prev) => prev.map((card) => (card.id === id ? { ...card, data } : card)))
+  }
+
   const handleFormChange = (data: CardData) => {
     setCurrentCard(data)
   }
@@ -160,7 +164,7 @@ export function HomePage() {
           </aside>
 
           <section className={styles.preview}>
-            <CardPreview template={template} cards={cards} onRemove={handleRemoveCard} previewCard={currentCard} />
+            <CardPreview template={template} cards={cards} onRemove={handleRemoveCard} onUpdateCard={handleUpdateCard} previewCard={currentCard} />
           </section>
         </div>
       ) : (

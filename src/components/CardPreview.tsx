@@ -1,23 +1,18 @@
 import { useMemo } from 'react'
 import type { TemplateInfo, CardData, Card } from '../types/template'
 import { renderCard } from '../utils/templateParser'
+import InteractiveCard from './InteractiveCard'
 import styles from './CardPreview.module.css'
 
 interface CardPreviewProps {
   template: TemplateInfo
   cards: Card[]
   onRemove: (id: string) => void
+  onUpdateCard?: (id: string, data: CardData) => void
   previewCard?: CardData | null
 }
 
-export function CardPreview({ template, cards, onRemove, previewCard }: CardPreviewProps) {
-  const renderedCards = useMemo(() => {
-    return cards.map((card) => ({
-      id: card.id,
-      html: renderCard(template, card.data),
-    }))
-  }, [template, cards])
-
+export function CardPreview({ template, cards, onRemove, onUpdateCard, previewCard }: CardPreviewProps) {
   const renderedPreview = useMemo(() => {
     if (!previewCard) return null
     return renderCard(template, previewCard)
@@ -52,11 +47,11 @@ export function CardPreview({ template, cards, onRemove, previewCard }: CardPrev
         </div>
       )}
 
-      {renderedCards.length > 0 && (
+      {cards.length > 0 && (
         <div className={styles.cardsSection}>
           <span className={styles.sectionLabel}>Added Cards</span>
           <div className={styles.grid}>
-            {renderedCards.map((card) => (
+            {cards.map((card) => (
               <div key={card.id} className={styles.cardWrapper}>
                 <button
                   className={styles.removeButton}
@@ -65,14 +60,19 @@ export function CardPreview({ template, cards, onRemove, previewCard }: CardPrev
                 >
                   ×
                 </button>
-                <div dangerouslySetInnerHTML={{ __html: card.html }} />
+                <InteractiveCard
+                  template={template}
+                  data={card.data}
+                  onUpdate={onUpdateCard ? (data) => onUpdateCard(card.id, data) : undefined}
+                  showControls={!!onUpdateCard}
+                />
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {!renderedPreview && renderedCards.length === 0 && (
+      {!renderedPreview && cards.length === 0 && (
         <p className={styles.empty}>No cards yet. Fill out the form to add cards.</p>
       )}
     </div>
