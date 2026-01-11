@@ -74,10 +74,7 @@ export function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onCh
               onChange={(e) => handleChange(slot.name, e.target.value)}
               placeholder="Image URL"
             />
-          ) : slot.type === 'html' ||
-            slot.name.includes('description') ||
-            slot.name.includes('text') ||
-            slot.name.includes('contents') ? (
+          ) : slot.type === 'html' || slot.multiline ? (
             <textarea
               className={styles.textarea}
               value={formData[slot.name] || ''}

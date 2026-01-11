@@ -26,6 +26,7 @@ export function parseTemplate(html: string): TemplateInfo {
 
     const slotTypeAttr = el.getAttribute('data-slot-type')
     const slotStyle = el.getAttribute('data-slot-style')
+    const multiline = el.hasAttribute('data-slot-multiline')
     let slotType: 'text' | 'image' | 'html' = 'text'
     if (slotTypeAttr === 'image') {
       slotType = 'image'
@@ -48,7 +49,7 @@ export function parseTemplate(html: string): TemplateInfo {
 
     // Avoid duplicates
     if (!slots.find((s) => s.name === slotName)) {
-      slots.push({ name: slotName, type: slotType, defaultValue })
+      slots.push({ name: slotName, type: slotType, defaultValue, multiline })
     }
   })
 

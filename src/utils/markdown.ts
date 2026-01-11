@@ -1,13 +1,10 @@
-import { marked } from 'marked'
+import { marked, Renderer } from 'marked'
 
-// Configure marked for inline rendering (no wrapping <p> tags for simple text)
-marked.use({
-  renderer: {
-    paragraph(token) {
-      return token.text
-    },
-  },
-})
+// Create a custom renderer that removes <p> tags but keeps inner HTML
+const renderer = new Renderer()
+renderer.paragraph = function ({ tokens }) {
+  return this.parser.parseInline(tokens) + '\n'
+}
 
 /**
  * Renders markdown text to HTML.
@@ -15,5 +12,5 @@ marked.use({
  */
 export function renderMarkdown(text: string): string {
   if (!text) return ''
-  return marked.parse(text, { async: false }) as string
+  return marked.parse(text, { async: false, renderer }) as string
 }
