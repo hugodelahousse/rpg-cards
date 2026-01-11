@@ -2,6 +2,9 @@
 
 A web application for generating printable cards using customizable HTML templates.
 
+> [!NOTE]
+> This project is 100% vibe coded using [Claude Code](https://claude.ai/code) on the web. Not bringing my laptop on vacation wasn't going to stop me from working on this project.
+
 ## Overview
 
 RPG Cards lets you create printable cards (game cards, flashcards, etc.) using a template-based system. Templates are HTML files that define the card layout and styling, with "slots" that get filled with your content.
