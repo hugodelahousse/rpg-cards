@@ -1,0 +1,310 @@
+.container {
+  min-height: 100vh;
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (min-width: 600px) {
+  .container {
+    padding: 2rem;
+  }
+}
+
+.header {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--color-accent);
+  border: var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+@media (min-width: 600px) {
+  .header {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+  }
+}
+
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 600px) {
+  .title {
+    font-size: 2.5rem;
+  }
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--color-text);
+  margin: 0;
+  font-weight: 500;
+}
+
+.homeLink {
+  padding: 0.5rem 1rem;
+  background-color: var(--color-text);
+  color: var(--color-surface);
+  border: var(--border);
+  box-shadow: var(--shadow-sm);
+  font-weight: 700;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 0.1s, box-shadow 0.1s;
+  white-space: nowrap;
+}
+
+@media (min-width: 600px) {
+  .homeLink {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.75rem;
+  }
+}
+
+.homeLink:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-md);
+}
+
+.homeLink:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.diceRow {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (min-width: 600px) {
+  .diceRow {
+    gap: 1rem;
+    justify-content: flex-start;
+  }
+}
+
+.diceButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  background-color: var(--color-surface);
+  border: var(--border);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s, background-color 0.1s;
+  min-width: 50px;
+}
+
+@media (min-width: 600px) {
+  .diceButton {
+    padding: 0.75rem;
+    min-width: 70px;
+  }
+}
+
+.diceButton:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-lg);
+  background-color: var(--color-focus);
+}
+
+.diceButton:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-active);
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.diceIcon {
+  width: 32px;
+  height: 32px;
+}
+
+@media (min-width: 600px) {
+  .diceIcon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.diceText {
+  font-size: 10px;
+  font-weight: 800;
+  fill: var(--color-surface);
+  font-family: inherit;
+}
+
+.diceLabel {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@media (min-width: 600px) {
+  .diceLabel {
+    font-size: 0.75rem;
+  }
+}
+
+.main {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.historySection {
+  background-color: var(--color-surface);
+  padding: 1rem;
+  border: var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+@media (min-width: 600px) {
+  .historySection {
+    padding: 1.5rem;
+  }
+}
+
+.historyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 600px) {
+  .sectionTitle {
+    font-size: 1.25rem;
+  }
+}
+
+.historyActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.toggleButton,
+.clearButton {
+  padding: 0.5rem 1rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: var(--border);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+@media (min-width: 600px) {
+  .toggleButton,
+  .clearButton {
+    font-size: 0.75rem;
+  }
+}
+
+.toggleButton {
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.clearButton {
+  background-color: var(--color-danger);
+  color: var(--color-surface);
+}
+
+.toggleButton:hover,
+.clearButton:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-md);
+}
+
+.toggleButton:active,
+.clearButton:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-active);
+}
+
+.historyList {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.emptyHistory {
+  color: var(--color-text);
+  font-weight: 500;
+  padding: 1rem;
+  background-color: var(--color-accent-light);
+  border: var(--border-dashed);
+  text-align: center;
+}
+
+.historyItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-neutral);
+  border: var(--border);
+}
+
+.historyDice {
+  font-weight: 800;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  min-width: 40px;
+}
+
+.historyResult {
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  min-width: 40px;
+  text-align: center;
+}
+
+.historyTime {
+  font-size: 0.75rem;
+  color: var(--color-text);
+  opacity: 0.7;
+  margin-left: auto;
+}
+
+@media print {
+  .container {
+    display: none;
+  }
+}
