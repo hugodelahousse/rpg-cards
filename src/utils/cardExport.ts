@@ -1,4 +1,3 @@
-import { toBlob } from 'html-to-image'
 import JSZip from 'jszip'
 import type { TemplateInfo, Card } from '../types/template'
 import { renderCard } from './templateParser'
@@ -73,7 +72,8 @@ async function renderCardToBlob(
     )
   )
 
-  // Render to blob
+  // Render to blob (lazy load html-to-image)
+  const { toBlob } = await import('html-to-image')
   const blob = await toBlob(cardContainer, {
     pixelRatio: 2,
   })
