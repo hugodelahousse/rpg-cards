@@ -1,6 +1,12 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import type { TemplateInfo, CardData, Card } from '../types/template'
 import { renderCard } from '../utils/templateParser'
+import {
+  downloadCardAsHtml,
+  downloadCardAsPng,
+  downloadCardsAsHtmlZip,
+  downloadCardsAsPngZip,
+} from '../utils/cardExport'
 import InteractiveCard from './InteractiveCard'
 import styles from './CardPreview.module.css'
 
@@ -14,6 +20,9 @@ interface CardPreviewProps {
 }
 
 export function CardPreview({ template, cards, onRemove, onUpdateCard, onEdit, previewCard }: CardPreviewProps) {
+  const [showDownloadMenu, setShowDownloadMenu] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
+
   const renderedPreview = useMemo(() => {
     if (!previewCard) return null
     return renderCard(template, previewCard)
@@ -23,14 +32,77 @@ export function CardPreview({ template, cards, onRemove, onUpdateCard, onEdit, p
     window.print()
   }
 
+  const handleDownloadAllHtml = async () => {
+    setIsDownloading(true)
+    setShowDownloadMenu(false)
+    try {
+      if (cards.length === 1) {
+        downloadCardAsHtml(template, cards[0])
+      } else {
+        await downloadCardsAsHtmlZip(template, cards)
+      }
+    } finally {
+      setIsDownloading(false)
+    }
+  }
+
+  const handleDownloadAllPng = async () => {
+    setIsDownloading(true)
+    setShowDownloadMenu(false)
+    try {
+      if (cards.length === 1) {
+        await downloadCardAsPng(template, cards[0])
+      } else {
+        await downloadCardsAsPngZip(template, cards)
+      }
+    } finally {
+      setIsDownloading(false)
+    }
+  }
+
+  const handleDownloadCardHtml = (card: Card) => {
+    downloadCardAsHtml(template, card)
+  }
+
+  const handleDownloadCardPng = async (card: Card) => {
+    await downloadCardAsPng(template, card)
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <span className={styles.title}>Cards ({cards.length})</span>
         {cards.length > 0 && (
-          <button className={styles.printButton} onClick={handlePrint}>
-            Print Cards
-          </button>
+          <div className={styles.headerActions}>
+            <button className={styles.printButton} onClick={handlePrint}>
+              Print Cards
+            </button>
+            <div className={styles.downloadDropdown}>
+              <button
+                className={styles.downloadButton}
+                onClick={() => setShowDownloadMenu(!showDownloadMenu)}
+                disabled={isDownloading}
+              >
+                {isDownloading ? 'Downloading...' : 'Download'}
+              </button>
+              {showDownloadMenu && (
+                <div className={styles.downloadMenu}>
+                  <button
+                    className={styles.downloadMenuItem}
+                    onClick={handleDownloadAllHtml}
+                  >
+                    {cards.length === 1 ? 'Download as HTML' : 'Download All as HTML (ZIP)'}
+                  </button>
+                  <button
+                    className={styles.downloadMenuItem}
+                    onClick={handleDownloadAllPng}
+                  >
+                    {cards.length === 1 ? 'Download as PNG' : 'Download All as PNG (ZIP)'}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </div>
 
@@ -55,6 +127,20 @@ export function CardPreview({ template, cards, onRemove, onUpdateCard, onEdit, p
             {cards.map((card) => (
               <div key={card.id} className={styles.cardWrapper}>
                 <div className={styles.cardActions}>
+                  <button
+                    className={styles.downloadCardButton}
+                    onClick={() => handleDownloadCardHtml(card)}
+                    title="Download as HTML"
+                  >
+                    HTML
+                  </button>
+                  <button
+                    className={styles.downloadCardButton}
+                    onClick={() => handleDownloadCardPng(card)}
+                    title="Download as PNG"
+                  >
+                    PNG
+                  </button>
                   {onEdit && (
                     <button
                       className={styles.editButton}
