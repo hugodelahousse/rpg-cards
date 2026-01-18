@@ -1,4 +1,4 @@
-import html2canvas from 'html2canvas'
+import { toBlob } from 'html-to-image'
 import JSZip from 'jszip'
 import type { TemplateInfo, Card } from '../types/template'
 import { renderCard } from './templateParser'
@@ -34,12 +34,12 @@ function createCardHtml(template: TemplateInfo, cardHtml: string): string {
 }
 
 /**
- * Render a card to a canvas element for PNG export.
+ * Render a card to a blob for PNG export.
  */
-async function renderCardToCanvas(
+async function renderCardToBlob(
   template: TemplateInfo,
   cardHtml: string
-): Promise<HTMLCanvasElement> {
+): Promise<Blob> {
   // Create a temporary container
   const container = document.createElement('div')
   container.style.position = 'absolute'
@@ -73,33 +73,19 @@ async function renderCardToCanvas(
     )
   )
 
-  // Render to canvas
-  const canvas = await html2canvas(cardContainer, {
-    backgroundColor: null,
-    scale: 2,
-    useCORS: true,
-    allowTaint: true,
+  // Render to blob
+  const blob = await toBlob(cardContainer, {
+    pixelRatio: 2,
   })
 
   // Cleanup
   document.body.removeChild(container)
 
-  return canvas
-}
+  if (!blob) {
+    throw new Error('Failed to render card to image')
+  }
 
-/**
- * Convert canvas to blob.
- */
-function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      if (blob) {
-        resolve(blob)
-      } else {
-        reject(new Error('Failed to create blob from canvas'))
-      }
-    }, 'image/png')
-  })
+  return blob
 }
 
 /**
@@ -125,8 +111,7 @@ export async function downloadCardAsPng(
   filename?: string
 ): Promise<void> {
   const cardHtml = renderCard(template, card.data)
-  const canvas = await renderCardToCanvas(template, cardHtml)
-  const blob = await canvasToBlob(canvas)
+  const blob = await renderCardToBlob(template, cardHtml)
   const name = filename || `${template.name.toLowerCase().replace(/\s+/g, '-')}-card.png`
   downloadBlob(blob, name)
 }
@@ -164,8 +149,7 @@ export async function downloadCardsAsPngZip(
   for (let i = 0; i < cards.length; i++) {
     const card = cards[i]
     const cardHtml = renderCard(template, card.data)
-    const canvas = await renderCardToCanvas(template, cardHtml)
-    const blob = await canvasToBlob(canvas)
+    const blob = await renderCardToBlob(template, cardHtml)
     zip.file(`${baseName}-card-${i + 1}.png`, blob)
   }
 
