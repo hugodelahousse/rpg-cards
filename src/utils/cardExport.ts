@@ -146,13 +146,17 @@ export async function downloadCardsAsPngZip(
   const zip = new JSZip()
   const baseName = template.name.toLowerCase().replace(/\s+/g, '-')
 
-  for (let i = 0; i < cards.length; i++) {
-    const card = cards[i]
-    const cardHtml = renderCard(template, card.data)
-    const blob = await renderCardToBlob(template, cardHtml)
-    zip.file(`${baseName}-card-${i + 1}.png`, blob)
-  }
+  const blobs = await Promise.all(
+    cards.map((card) => {
+      const cardHtml = renderCard(template, card.data)
+      return renderCardToBlob(template, cardHtml)
+    })
+  )
 
-  const blob = await zip.generateAsync({ type: 'blob' })
-  downloadBlob(blob, `${baseName}-cards.zip`)
+  blobs.forEach((blob, index) => {
+    zip.file(`${baseName}-card-${index + 1}.png`, blob)
+  })
+
+  const zipBlob = await zip.generateAsync({ type: 'blob' })
+  downloadBlob(zipBlob, `${baseName}-cards.zip`)
 }
