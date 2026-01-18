@@ -2,7 +2,7 @@ import html2canvas from 'html2canvas'
 import JSZip from 'jszip'
 import type { TemplateInfo, Card } from '../types/template'
 import { renderCard } from './templateParser'
-import { downloadFile } from './download'
+import { downloadFile, downloadBlob } from './download'
 
 /**
  * Create a standalone HTML document for a card.
@@ -127,13 +127,8 @@ export async function downloadCardAsPng(
   const cardHtml = renderCard(template, card.data)
   const canvas = await renderCardToCanvas(template, cardHtml)
   const blob = await canvasToBlob(canvas)
-
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename || `${template.name.toLowerCase().replace(/\s+/g, '-')}-card.png`
-  a.click()
-  URL.revokeObjectURL(url)
+  const name = filename || `${template.name.toLowerCase().replace(/\s+/g, '-')}-card.png`
+  downloadBlob(blob, name)
 }
 
 /**
@@ -153,12 +148,7 @@ export async function downloadCardsAsHtmlZip(
   })
 
   const blob = await zip.generateAsync({ type: 'blob' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `${baseName}-cards.zip`
-  a.click()
-  URL.revokeObjectURL(url)
+  downloadBlob(blob, `${baseName}-cards.zip`)
 }
 
 /**
@@ -180,10 +170,5 @@ export async function downloadCardsAsPngZip(
   }
 
   const blob = await zip.generateAsync({ type: 'blob' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `${baseName}-cards.zip`
-  a.click()
-  URL.revokeObjectURL(url)
+  downloadBlob(blob, `${baseName}-cards.zip`)
 }
