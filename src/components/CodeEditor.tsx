@@ -9,7 +9,7 @@ import {
   defaultHighlightStyle,
   bracketMatching,
 } from '@codemirror/language'
-import { solarizedDark } from '@ddietr/codemirror-themes/solarized-dark'
+import { tomorrowNightEighties } from './editorTheme'
 import styles from './CodeEditor.module.css'
 
 interface CodeEditorProps {
@@ -78,7 +78,7 @@ export function CodeEditor({
     ]
 
     if (darkMode) {
-      extensions.push(solarizedDark)
+      extensions.push(...tomorrowNightEighties)
     }
 
     const state = EditorState.create({
