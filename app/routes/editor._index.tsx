@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { useLocalTemplates } from '../../src/hooks/useLocalTemplates'
+import { useLocalTemplates, useCreateTemplate, useCloneTemplate } from '../../src/hooks/useTemplateQueries'
 import { BUILT_IN_TEMPLATES } from '../../src/constants/templates'
 import { formatDate } from '../../src/utils/formatting'
 import type { BuiltInTemplate } from '../../src/types/localTemplate'
@@ -8,12 +8,14 @@ import styles from '../../src/pages/TemplateLibraryPage.module.css'
 
 export default function TemplateLibraryPage() {
   const navigate = useNavigate()
-  const { templates, loading, create, clone } = useLocalTemplates()
+  const { data: templates = [], isLoading } = useLocalTemplates()
+  const createTemplate = useCreateTemplate()
+  const cloneTemplate = useCloneTemplate()
   const [cloning, setCloning] = useState<string | null>(null)
   const [importing, setImporting] = useState(false)
 
   const handleCreateNew = async () => {
-    const template = await create()
+    const template = await createTemplate.mutateAsync()
     navigate(`/editor/${template.id}`)
   }
 
@@ -22,7 +24,11 @@ export default function TemplateLibraryPage() {
     try {
       const response = await fetch(builtIn.path)
       const html = await response.text()
-      const cloned = await clone(html, `${builtIn.name} (Copy)`, '')
+      const cloned = await cloneTemplate.mutateAsync({
+        sourceHtml: html,
+        name: `${builtIn.name} (Copy)`,
+        description: '',
+      })
       navigate(`/editor/${cloned.id}`)
     } catch (e) {
       console.error('Failed to clone template:', e)
@@ -39,7 +45,11 @@ export default function TemplateLibraryPage() {
     try {
       const html = await file.text()
       const name = file.name.replace(/\.html?$/i, '')
-      const imported = await clone(html, name, '')
+      const imported = await cloneTemplate.mutateAsync({
+        sourceHtml: html,
+        name,
+        description: '',
+      })
       navigate(`/editor/${imported.id}`)
     } catch (err) {
       console.error('Failed to import template:', err)
@@ -69,8 +79,8 @@ export default function TemplateLibraryPage() {
               hidden
             />
           </label>
-          <button onClick={handleCreateNew} className={styles.createButton}>
-            NEW TEMPLATE
+          <button onClick={handleCreateNew} className={styles.createButton} disabled={createTemplate.isPending}>
+            {createTemplate.isPending ? 'CREATING...' : 'NEW TEMPLATE'}
           </button>
         </div>
       </header>
@@ -106,7 +116,7 @@ export default function TemplateLibraryPage() {
         {/* Local templates section */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>YOUR TEMPLATES</h2>
-          {loading ? (
+          {isLoading ? (
             <p className={styles.loadingText}>Loading...</p>
           ) : templates.length === 0 ? (
             <div className={styles.emptyState}>

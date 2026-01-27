@@ -1,8 +1,7 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router'
-import type { TemplateInfo, CardData, Card } from '../../src/types/template'
-import { parseTemplate } from '../../src/utils/templateParser'
-import { useLocalTemplates } from '../../src/hooks/useLocalTemplates'
+import type { CardData, Card } from '../../src/types/template'
+import { useLocalTemplates, useParsedTemplate } from '../../src/hooks/useTemplateQueries'
 import { BUILT_IN_TEMPLATES, RPG_CARD_TEMPLATE_ID } from '../../src/constants/templates'
 import { generateCardId } from '../../src/utils/cardData'
 import { CardForm } from '../../src/components/CardForm'
@@ -11,69 +10,32 @@ import styles from '../../src/pages/HomePage.module.css'
 
 export default function HomePage() {
   const [selectedTemplate, setSelectedTemplate] = useState(BUILT_IN_TEMPLATES[0].id)
-  const [template, setTemplate] = useState<TemplateInfo | null>(null)
   const [cards, setCards] = useState<Card[]>([])
-  const [loading, setLoading] = useState(true)
   const [currentCard, setCurrentCard] = useState<CardData | null>(null)
   const [pendingRpgCards, setPendingRpgCards] = useState<Card[] | null>(null)
   const [editingCard, setEditingCard] = useState<{ id: string; data: CardData } | null>(null)
 
-  const { templates: localTemplates, loading: localLoading, getTemplate } = useLocalTemplates()
+  const { data: localTemplates = [], isLoading: localLoading } = useLocalTemplates()
 
-  const allTemplates = useMemo(() => {
-    const builtIn = BUILT_IN_TEMPLATES.map((t) => ({
-      id: t.id,
-      name: t.name,
-      isBuiltIn: true as const,
-      path: t.path,
-    }))
-    const local = localTemplates.map((t) => ({
-      id: t.id,
-      name: t.name,
-      isBuiltIn: false as const,
-    }))
-    return [...builtIn, ...local]
-  }, [localTemplates])
+  const { data: template, isLoading: templateLoading } = useParsedTemplate(
+    selectedTemplate,
+    localTemplates
+  )
 
+  // Handle pending RPG cards after template switch
   useEffect(() => {
-    const loadTemplate = async () => {
-      setLoading(true)
-      const templateConfig = allTemplates.find((t) => t.id === selectedTemplate)
-      if (!templateConfig) return
-
-      try {
-        let html: string
-        if (templateConfig.isBuiltIn) {
-          const response = await fetch(templateConfig.path)
-          html = await response.text()
-        } else {
-          const localTemplate = await getTemplate(selectedTemplate)
-          if (!localTemplate) {
-            console.error('Template not found:', selectedTemplate)
-            return
-          }
-          html = localTemplate.html
-        }
-        const parsed = parseTemplate(html)
-        setTemplate(parsed)
-        // If there are pending RPG cards, add them after template loads
-        if (pendingRpgCards && selectedTemplate === RPG_CARD_TEMPLATE_ID) {
-          setCards(pendingRpgCards)
-          setPendingRpgCards(null)
-        } else {
-          setCards([])
-        }
-      } catch (error) {
-        console.error('Failed to load template:', error)
-      } finally {
-        setLoading(false)
-      }
+    if (pendingRpgCards && selectedTemplate === RPG_CARD_TEMPLATE_ID && template) {
+      setCards(pendingRpgCards)
+      setPendingRpgCards(null)
     }
+  }, [pendingRpgCards, selectedTemplate, template])
 
-    if (!localLoading) {
-      loadTemplate()
+  // Clear cards when template changes (unless we have pending cards)
+  useEffect(() => {
+    if (!pendingRpgCards) {
+      setCards([])
     }
-  }, [selectedTemplate, allTemplates, localLoading, getTemplate, pendingRpgCards])
+  }, [selectedTemplate, pendingRpgCards])
 
   const handleAddCard = (data: CardData) => {
     if (editingCard) {
@@ -123,6 +85,8 @@ export default function HomePage() {
     setCurrentCard(data)
   }
 
+  const isLoading = localLoading || templateLoading
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -164,7 +128,7 @@ export default function HomePage() {
         </select>
       </div>
 
-      {loading || localLoading ? (
+      {isLoading ? (
         <p className={styles.loading}>Loading template...</p>
       ) : template ? (
         <div className={styles.main}>

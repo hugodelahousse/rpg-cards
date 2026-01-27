@@ -1,53 +1,40 @@
-import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react'
-import { useParams, useNavigate, Link } from 'react-router'
+import { useState, useMemo, useCallback, lazy, Suspense } from 'react'
+import { useNavigate, Link, redirect } from 'react-router'
+import type { Route } from './+types/editor.$templateId'
 import { ConfirmModal } from '../../src/components/Modal'
 
 const CodeEditor = lazy(() => import('../../src/components/CodeEditor'))
-import { useLocalTemplates } from '../../src/hooks/useLocalTemplates'
+import { useSaveTemplate, useDeleteTemplate } from '../../src/hooks/useTemplateQueries'
+import { getTemplate } from '../../src/utils/templateStorage'
 import { parseTemplate, renderCard } from '../../src/utils/templateParser'
 import { createDefaultCardData } from '../../src/utils/cardData'
 import { downloadHtml } from '../../src/utils/download'
-import type { LocalTemplate } from '../../src/types/localTemplate'
 import type { TemplateInfo } from '../../src/types/template'
 import styles from '../../src/pages/EditorPage.module.css'
 
 type TabType = 'editor' | 'preview'
 
-export default function EditorTemplatePage() {
-  const { templateId } = useParams<{ templateId: string }>()
-  const navigate = useNavigate()
-  const { getTemplate, save, remove } = useLocalTemplates()
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  const template = await getTemplate(params.templateId)
+  if (!template) {
+    throw redirect('/editor')
+  }
+  return { template }
+}
 
-  const [template, setTemplate] = useState<LocalTemplate | null>(null)
-  const [html, setHtml] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
+export default function EditorTemplatePage({ loaderData }: Route.ComponentProps) {
+  const { template: initialTemplate } = loaderData
+  const navigate = useNavigate()
+  const saveTemplate = useSaveTemplate()
+  const deleteTemplate = useDeleteTemplate()
+
+  const [html, setHtml] = useState(initialTemplate.html)
   const [activeTab, setActiveTab] = useState<TabType>('editor')
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
-  const [templateName, setTemplateName] = useState('')
+  const [templateName, setTemplateName] = useState(initialTemplate.name)
   const [showSettings, setShowSettings] = useState(false)
   const [showBoundingBoxes, setShowBoundingBoxes] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-
-  // Load template
-  useEffect(() => {
-    async function load() {
-      setLoading(true)
-      if (templateId) {
-        const loaded = await getTemplate(templateId)
-        if (loaded) {
-          setTemplate(loaded)
-          setHtml(loaded.html)
-          setTemplateName(loaded.name)
-        } else {
-          navigate('/editor')
-        }
-      }
-      setLoading(false)
-      setHasUnsavedChanges(false)
-    }
-    load()
-  }, [templateId, getTemplate, navigate])
 
   // Parse template for preview
   const parsedTemplate: TemplateInfo | null = useMemo(() => {
@@ -71,41 +58,27 @@ export default function EditorTemplatePage() {
   }, [])
 
   const handleSave = async () => {
-    setSaving(true)
     try {
       const parsed = parseTemplate(html)
-      if (template) {
-        await save({
-          ...template,
-          name: templateName || parsed.name,
-          description: parsed.description,
-          html,
-        })
-      }
+      await saveTemplate.mutateAsync({
+        ...initialTemplate,
+        name: templateName || parsed.name,
+        description: parsed.description,
+        html,
+      })
       setHasUnsavedChanges(false)
     } catch (e) {
       console.error('Failed to save:', e)
-    } finally {
-      setSaving(false)
     }
   }
 
   const handleDelete = async () => {
-    if (!template) return
-    await remove(template.id)
+    await deleteTemplate.mutateAsync(initialTemplate.id)
     navigate('/editor')
   }
 
   const handleExport = () => {
     downloadHtml(html, `${templateName || 'template'}.html`)
-  }
-
-  if (loading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loading}>Loading...</div>
-      </div>
-    )
   }
 
   return (
@@ -137,10 +110,10 @@ export default function EditorTemplatePage() {
           </button>
           <button
             onClick={handleSave}
-            disabled={saving}
+            disabled={saveTemplate.isPending}
             className={styles.saveButton}
           >
-            {saving ? 'SAVING...' : 'SAVE'}
+            {saveTemplate.isPending ? 'SAVING...' : 'SAVE'}
           </button>
         </div>
       </header>
@@ -150,11 +123,9 @@ export default function EditorTemplatePage() {
           <button onClick={handleExport} className={styles.actionButton}>
             EXPORT HTML
           </button>
-          {template && (
-            <button onClick={() => setShowDeleteConfirm(true)} className={styles.deleteButton}>
-              DELETE TEMPLATE
-            </button>
-          )}
+          <button onClick={() => setShowDeleteConfirm(true)} className={styles.deleteButton}>
+            DELETE TEMPLATE
+          </button>
         </div>
       )}
 
