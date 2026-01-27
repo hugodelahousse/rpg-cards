@@ -1,0 +1,58 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+:root {
+  /* Neobrutalist Color Palette */
+  --color-background: #f5f5dc;
+  --color-surface: #ffffff;
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
+  --color-accent: #fbbf24;
+  --color-accent-light: #fef3c7;
+  --color-text: #000000;
+  --color-border: #000000;
+  --color-neutral: #e5e7eb;
+  --color-focus: #e0f2fe;
+
+  /* Neobrutalist Shadows */
+  --shadow-sm: 3px 3px 0 var(--color-border);
+  --shadow-md: 4px 4px 0 var(--color-border);
+  --shadow-lg: 6px 6px 0 var(--color-border);
+  --shadow-hover: 2px 2px 0 var(--color-border);
+  --shadow-active: 0 0 0 var(--color-border);
+
+  /* Border */
+  --border-width: 3px;
+  --border: var(--border-width) solid var(--color-border);
+  --border-dashed: var(--border-width) dashed var(--color-border);
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+@media print {
+  body {
+    background-color: white;
+  }
+}

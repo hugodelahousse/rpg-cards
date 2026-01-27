@@ -19,7 +19,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "types": ["@react-router/node", "vite/client", "node"]
   },
-  "include": ["src"]
+  "include": ["src", "app", "react-router.config.ts", "vite.config.ts"]
 }
