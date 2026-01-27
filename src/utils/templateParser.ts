@@ -26,12 +26,7 @@ export function parseTemplate(html: string): TemplateInfo {
     const slotTypeAttr = el.getAttribute('data-slot-type')
     const slotStyle = el.getAttribute('data-slot-style')
     const richContent = el.hasAttribute('data-slot-rich-content')
-    let slotType: 'text' | 'image' | 'html' = 'text'
-    if (slotTypeAttr === 'image') {
-      slotType = 'image'
-    } else if (slotTypeAttr === 'html') {
-      slotType = 'html'
-    }
+    const slotType: 'text' | 'image' = slotTypeAttr === 'image' ? 'image' : 'text'
 
     let defaultValue = ''
     if (slotStyle) {
@@ -40,7 +35,8 @@ export function parseTemplate(html: string): TemplateInfo {
       defaultValue = style.getPropertyValue(slotStyle) || ''
     } else if (slotType === 'image') {
       defaultValue = (el as HTMLImageElement).src || ''
-    } else if (slotType === 'html') {
+    } else if (richContent) {
+      // Rich content slots store HTML
       defaultValue = el.innerHTML?.trim() || ''
     } else {
       defaultValue = el.textContent?.trim() || ''
@@ -88,8 +84,8 @@ export function renderCard(template: TemplateInfo, data: Record<string, string>)
 
     if (slotType === 'image') {
       (el as HTMLImageElement).src = data[slotName]
-    } else if (slotType === 'html' || el.hasAttribute('data-slot-rich-content')) {
-      // HTML slots and rich content slots render HTML directly
+    } else if (el.hasAttribute('data-slot-rich-content')) {
+      // Rich content slots render HTML directly
       el.innerHTML = data[slotName]
     } else {
       // Plain text slots - escape HTML

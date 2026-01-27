@@ -133,13 +133,6 @@ export function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onCh
                 />
               )}
             </div>
-          ) : slot.type === 'html' ? (
-            <textarea
-              className={styles.textarea}
-              value={formData[slot.name] || ''}
-              onChange={(e) => handleChange(slot.name, e.target.value)}
-              rows={8}
-            />
           ) : slot.richContent ? (
             <Suspense fallback={<div className={styles.loading}>Loading editor...</div>}>
               <TiptapEditor
