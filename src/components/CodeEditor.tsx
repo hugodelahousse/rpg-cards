@@ -1,17 +1,8 @@
-import { useRef, useCallback, useSyncExternalStore } from 'react'
+import { useRef, useCallback } from 'react'
 import Editor, { loader, type OnMount } from '@monaco-editor/react'
 import type { editor } from 'monaco-editor'
 import { tomorrowNightEightiesTheme, TOMORROW_NIGHT_EIGHTIES_THEME } from './editorTheme'
 import styles from './CodeEditor.module.css'
-
-// SSR-safe check for client-side rendering
-const subscribe = () => () => {}
-const getSnapshot = () => true
-const getServerSnapshot = () => false
-
-function useIsClient() {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
-}
 
 interface CodeEditorProps {
   value: string
@@ -21,16 +12,13 @@ interface CodeEditorProps {
 }
 
 // Configure Monaco to lazy load from CDN for optimal bundle size
-// Only configure on client side
-if (typeof window !== 'undefined') {
-  loader.config({
-    paths: {
-      vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.55.1/min/vs',
-    },
-  })
-}
+loader.config({
+  paths: {
+    vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.55.1/min/vs',
+  },
+})
 
-function CodeEditorInner({
+export function CodeEditor({
   value,
   onChange,
   language = 'html',
@@ -83,17 +71,6 @@ function CodeEditorInner({
       />
     </div>
   )
-}
-
-export function CodeEditor(props: CodeEditorProps) {
-  const isClient = useIsClient()
-
-  // Don't render Monaco during SSR - it doesn't support server rendering
-  if (!isClient) {
-    return <div className={styles.loading}>Loading editor...</div>
-  }
-
-  return <CodeEditorInner {...props} />
 }
 
 // Default export for lazy loading
