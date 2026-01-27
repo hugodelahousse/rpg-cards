@@ -1,15 +1,7 @@
-import { useEffect, useRef, useCallback } from 'react'
-import { EditorView, keymap, lineNumbers, highlightActiveLine } from '@codemirror/view'
-import { EditorState } from '@codemirror/state'
-import { html } from '@codemirror/lang-html'
-import { css } from '@codemirror/lang-css'
-import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
-import {
-  syntaxHighlighting,
-  defaultHighlightStyle,
-  bracketMatching,
-} from '@codemirror/language'
-import { tomorrowNightEighties } from './editorTheme'
+import { useRef, useCallback } from 'react'
+import Editor, { loader, type OnMount } from '@monaco-editor/react'
+import type { editor } from 'monaco-editor'
+import { tomorrowNightEightiesTheme, TOMORROW_NIGHT_EIGHTIES_THEME } from './editorTheme'
 import styles from './CodeEditor.module.css'
 
 interface CodeEditorProps {
@@ -19,104 +11,66 @@ interface CodeEditorProps {
   darkMode?: boolean
 }
 
+// Configure Monaco to lazy load from CDN for optimal bundle size
+loader.config({
+  paths: {
+    vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.55.1/min/vs',
+  },
+})
+
 export function CodeEditor({
   value,
   onChange,
   language = 'html',
   darkMode = true,
 }: CodeEditorProps) {
-  const editorRef = useRef<HTMLDivElement>(null)
-  const viewRef = useRef<EditorView | null>(null)
-  const onChangeRef = useRef(onChange)
-  const initialValueRef = useRef(value)
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
 
-  // Keep refs updated
-  onChangeRef.current = onChange
-  // Update initial value ref only when editor is recreated
-  if (!viewRef.current) {
-    initialValueRef.current = value
-  }
+  const handleEditorDidMount: OnMount = useCallback((editor, monaco) => {
+    editorRef.current = editor
 
-  const updateListener = useCallback(() => {
-    return EditorView.updateListener.of((update) => {
-      if (update.docChanged) {
-        const newValue = update.state.doc.toString()
-        onChangeRef.current(newValue)
-      }
-    })
+    // Register custom theme
+    monaco.editor.defineTheme(TOMORROW_NIGHT_EIGHTIES_THEME, tomorrowNightEightiesTheme)
+    monaco.editor.setTheme(TOMORROW_NIGHT_EIGHTIES_THEME)
   }, [])
 
-  useEffect(() => {
-    if (!editorRef.current) return
+  const handleChange = useCallback(
+    (newValue: string | undefined) => {
+      if (newValue !== undefined) {
+        onChange(newValue)
+      }
+    },
+    [onChange]
+  )
 
-    const extensions = [
-      lineNumbers(),
-      highlightActiveLine(),
-      history(),
-      bracketMatching(),
-      syntaxHighlighting(defaultHighlightStyle),
-      keymap.of([...defaultKeymap, ...historyKeymap]),
-      language === 'html' ? html() : css(),
-      updateListener(),
-      EditorView.lineWrapping,
-      EditorView.theme({
-        '&': {
-          height: '100%',
-          fontSize: '14px',
-        },
-        '.cm-scroller': {
-          overflow: 'auto',
+  return (
+    <div className={styles.editor}>
+      <Editor
+        value={value}
+        onChange={handleChange}
+        language={language}
+        theme={darkMode ? TOMORROW_NIGHT_EIGHTIES_THEME : 'light'}
+        onMount={handleEditorDidMount}
+        options={{
+          fontSize: 14,
           fontFamily: "'Fira Code', 'Monaco', 'Consolas', monospace",
-        },
-        '.cm-content': {
-          padding: '8px 0',
-        },
-        '.cm-gutters': {
-          borderRight: '3px solid #000',
-        },
-      }),
-    ]
-
-    if (darkMode) {
-      extensions.push(...tomorrowNightEighties)
-    }
-
-    const state = EditorState.create({
-      doc: initialValueRef.current,
-      extensions,
-    })
-
-    const view = new EditorView({
-      state,
-      parent: editorRef.current,
-    })
-
-    viewRef.current = view
-
-    return () => {
-      view.destroy()
-      viewRef.current = null
-    }
-  }, [language, darkMode, updateListener])
-
-  // Update content when value changes externally
-  useEffect(() => {
-    const view = viewRef.current
-    if (!view) return
-
-    const currentContent = view.state.doc.toString()
-    if (currentContent !== value) {
-      view.dispatch({
-        changes: {
-          from: 0,
-          to: currentContent.length,
-          insert: value,
-        },
-      })
-    }
-  }, [value])
-
-  return <div ref={editorRef} className={styles.editor} />
+          lineNumbers: 'on',
+          wordWrap: 'on',
+          minimap: { enabled: false },
+          scrollBeyondLastLine: false,
+          automaticLayout: true,
+          bracketPairColorization: { enabled: true },
+          renderLineHighlight: 'line',
+          padding: { top: 8, bottom: 8 },
+          scrollbar: {
+            verticalScrollbarSize: 10,
+            horizontalScrollbarSize: 10,
+          },
+        }}
+        loading={<div className={styles.loading}>Loading editor...</div>}
+      />
+    </div>
+  )
 }
 
 // Default export for lazy loading
