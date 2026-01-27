@@ -1,26 +1,59 @@
-import { useState, useMemo, useCallback, lazy, Suspense } from 'react'
-import { useNavigate, Link } from 'react-router'
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react'
+import { useParams, useNavigate, Link } from 'react-router-dom'
+import { ConfirmModal } from '../components/Modal'
 
-const CodeEditor = lazy(() => import('../../src/components/CodeEditor'))
-import { parseTemplate, renderCard } from '../../src/utils/templateParser'
-import { getDefaultTemplateHtml, createTemplate } from '../../src/utils/templateStorage'
-import { createDefaultCardData } from '../../src/utils/cardData'
-import { downloadHtml } from '../../src/utils/download'
-import type { TemplateInfo } from '../../src/types/template'
-import styles from '../../src/pages/EditorPage.module.css'
+const CodeEditor = lazy(() => import('../components/CodeEditor'))
+import { useLocalTemplates } from '../hooks/useLocalTemplates'
+import { parseTemplate, renderCard } from '../utils/templateParser'
+import { getDefaultTemplateHtml, createTemplate } from '../utils/templateStorage'
+import { createDefaultCardData } from '../utils/cardData'
+import { downloadHtml } from '../utils/download'
+import type { LocalTemplate } from '../types/localTemplate'
+import type { TemplateInfo } from '../types/template'
+import styles from './EditorPage.module.css'
 
 type TabType = 'editor' | 'preview'
 
-export default function EditorNewPage() {
+export function EditorPage() {
+  const { templateId } = useParams<{ templateId: string }>()
   const navigate = useNavigate()
+  const { getTemplate, save, remove } = useLocalTemplates()
 
-  const [html, setHtml] = useState(() => getDefaultTemplateHtml())
+  const [template, setTemplate] = useState<LocalTemplate | null>(null)
+  const [html, setHtml] = useState('')
+  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [activeTab, setActiveTab] = useState<TabType>('editor')
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
-  const [templateName, setTemplateName] = useState('New Template')
+  const [templateName, setTemplateName] = useState('')
   const [showSettings, setShowSettings] = useState(false)
   const [showBoundingBoxes, setShowBoundingBoxes] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+
+  // Load template
+  useEffect(() => {
+    async function load() {
+      setLoading(true)
+      if (templateId === 'new') {
+        const defaultHtml = getDefaultTemplateHtml()
+        setHtml(defaultHtml)
+        setTemplate(null)
+        setTemplateName('New Template')
+      } else if (templateId) {
+        const loaded = await getTemplate(templateId)
+        if (loaded) {
+          setTemplate(loaded)
+          setHtml(loaded.html)
+          setTemplateName(loaded.name)
+        } else {
+          navigate('/editor')
+        }
+      }
+      setLoading(false)
+      setHasUnsavedChanges(false)
+    }
+    load()
+  }, [templateId, getTemplate, navigate])
 
   // Parse template for preview
   const parsedTemplate: TemplateInfo | null = useMemo(() => {
@@ -47,13 +80,24 @@ export default function EditorNewPage() {
     setSaving(true)
     try {
       const parsed = parseTemplate(html)
-      // Save new template
-      const newTemplate = await createTemplate(
-        templateName || parsed.name,
-        parsed.description,
-        html
-      )
-      navigate(`/editor/${newTemplate.id}`, { replace: true })
+      if (template) {
+        await save({
+          ...template,
+          name: templateName || parsed.name,
+          description: parsed.description,
+          html,
+        })
+      } else {
+        // Save new template
+        const newTemplate = await createTemplate(
+          templateName || parsed.name,
+          parsed.description,
+          html
+        )
+        navigate(`/editor/${newTemplate.id}`, { replace: true })
+        setTemplate(newTemplate)
+      }
+      setHasUnsavedChanges(false)
     } catch (e) {
       console.error('Failed to save:', e)
     } finally {
@@ -61,8 +105,22 @@ export default function EditorNewPage() {
     }
   }
 
+  const handleDelete = async () => {
+    if (!template) return
+    await remove(template.id)
+    navigate('/editor')
+  }
+
   const handleExport = () => {
     downloadHtml(html, `${templateName || 'template'}.html`)
+  }
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loading}>Loading...</div>
+      </div>
+    )
   }
 
   return (
@@ -107,8 +165,23 @@ export default function EditorNewPage() {
           <button onClick={handleExport} className={styles.actionButton}>
             EXPORT HTML
           </button>
+          {template && (
+            <button onClick={() => setShowDeleteConfirm(true)} className={styles.deleteButton}>
+              DELETE TEMPLATE
+            </button>
+          )}
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDelete}
+        title="Delete Template"
+        message="Are you sure you want to delete this template? This action cannot be undone."
+        confirmText="DELETE"
+        variant="danger"
+      />
 
       {/* Mobile tab bar */}
       <div className={styles.tabBar}>
