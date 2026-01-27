@@ -1,6 +1,5 @@
 import type { TemplateInfo, TemplateSlot } from '../types/template'
 import { FONT_SIZE_PREFIX } from '../types/template'
-import { renderMarkdown } from './markdown'
 
 export function parseTemplate(html: string): TemplateInfo {
   const parser = new DOMParser()
@@ -27,12 +26,7 @@ export function parseTemplate(html: string): TemplateInfo {
     const slotTypeAttr = el.getAttribute('data-slot-type')
     const slotStyle = el.getAttribute('data-slot-style')
     const multiline = el.hasAttribute('data-slot-multiline')
-    let slotType: 'text' | 'image' | 'html' = 'text'
-    if (slotTypeAttr === 'image') {
-      slotType = 'image'
-    } else if (slotTypeAttr === 'html') {
-      slotType = 'html'
-    }
+    const slotType: 'text' | 'image' = slotTypeAttr === 'image' ? 'image' : 'text'
 
     let defaultValue = ''
     if (slotStyle) {
@@ -41,7 +35,8 @@ export function parseTemplate(html: string): TemplateInfo {
       defaultValue = style.getPropertyValue(slotStyle) || ''
     } else if (slotType === 'image') {
       defaultValue = (el as HTMLImageElement).src || ''
-    } else if (slotType === 'html') {
+    } else if (multiline) {
+      // Multiline slots store HTML
       defaultValue = el.innerHTML?.trim() || ''
     } else {
       defaultValue = el.textContent?.trim() || ''
@@ -89,11 +84,12 @@ export function renderCard(template: TemplateInfo, data: Record<string, string>)
 
     if (slotType === 'image') {
       (el as HTMLImageElement).src = data[slotName]
-    } else if (slotType === 'html') {
+    } else if (el.hasAttribute('data-slot-multiline')) {
+      // Multiline slots render HTML directly
       el.innerHTML = data[slotName]
     } else {
-      // Text slots support markdown
-      el.innerHTML = renderMarkdown(data[slotName])
+      // Plain text slots - escape HTML
+      el.textContent = data[slotName]
     }
   })
 

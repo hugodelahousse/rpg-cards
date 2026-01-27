@@ -1,6 +1,6 @@
 export interface TemplateSlot {
   name: string
-  type: 'text' | 'image' | 'html'
+  type: 'text' | 'image'
   defaultValue: string
   multiline?: boolean
 }

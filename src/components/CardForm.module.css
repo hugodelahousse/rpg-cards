@@ -123,3 +123,12 @@
   border: var(--border);
   background-color: var(--color-surface);
 }
+
+.loading {
+  padding: 1rem;
+  text-align: center;
+  color: var(--color-text);
+  font-size: 0.875rem;
+  border: var(--border);
+  background-color: var(--color-surface);
+}
