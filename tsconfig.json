@@ -17,11 +17,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
-    "rootDirs": [".", "./.react-router/types"],
     "paths": {
       "@/*": ["src/*"]
-    },
-    "types": ["@react-router/node", "vite/client", "node"]
+    }
   },
-  "include": ["src", "app", ".react-router/types/**/*.ts", "react-router.config.ts", "vite.config.ts"]
+  "include": ["src"]
 }

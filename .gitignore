@@ -4,11 +4,7 @@ node_modules
 # Build output
 dist
 dist-ssr
-build
 *.tsbuildinfo
-
-# React Router generated types
-.react-router
 
 # Local env files
 .env

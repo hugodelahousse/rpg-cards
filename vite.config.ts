@@ -1,13 +1,14 @@
-import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from 'vite'
-import { fileURLToPath, URL } from 'node:url'
+import react from '@vitejs/plugin-react'
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [reactRouter()],
+  plugins: [react()],
+  base: '/rpg-cards/',
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@': path.resolve(__dirname, './src'),
     },
   },
 })
