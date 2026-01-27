@@ -5,7 +5,7 @@ A client-side React app for generating printable cards from HTML templates.
 ## Tech Stack
 
 - **Runtime**: Bun
-- **Framework**: React 18 + TypeScript
+- **Framework**: React 18 + TypeScript + React Compiler
 - **Routing**: React Router with static pre-rendering (GitHub Pages)
 - **Styling**: CSS Modules
 
@@ -56,6 +56,23 @@ Run verification before committing:
 ```bash
 bun run typecheck && bun run lint && bun run build
 ```
+
+## React Compiler
+
+This project uses **React Compiler** for automatic memoization. The compiler optimizes components at build time, eliminating the need for manual `useMemo`, `useCallback`, and `React.memo`.
+
+### What this means for development:
+
+- **No manual memoization**: Don't add `useMemo`, `useCallback`, or `React.memo` - the compiler handles this automatically
+- **Follow the Rules of React**: The compiler only works when components follow React's rules. Never disable ESLint rules for `react-hooks/*` or `react-compiler/*`
+- **Stable references**: Props like callbacks don't need manual memoization in parent components
+- **ESLint enforcement**: The `react-compiler/react-compiler` rule is set to `error` - violations will fail the build
+
+### If the compiler skips a component:
+
+The ESLint plugin will warn you. Common causes:
+- Disabled React ESLint rules (remove the disable comment)
+- Violations of the Rules of React (fix the underlying issue)
 
 ## Design System: Neobrutalist Style
 
