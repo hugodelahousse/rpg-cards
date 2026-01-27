@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense, lazy } from 'react'
 import type { TemplateSlot, CardData } from '../types/template'
 import { isRpgCardFormat, convertRpgCards } from '../utils/rpgCardConverter'
 import { AlertModal } from './Modal'
 import { formatSlotLabel } from '../utils/formatting'
 import { createDefaultCardData } from '../utils/cardData'
 import styles from './CardForm.module.css'
+
+// Lazy load TiptapEditor for better bundle splitting
+const TiptapEditor = lazy(() => import('./TiptapEditor'))
 
 interface EditingCard {
   id: string
@@ -130,13 +133,20 @@ export function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onCh
                 />
               )}
             </div>
-          ) : slot.type === 'html' || slot.multiline ? (
+          ) : slot.type === 'html' ? (
             <textarea
               className={styles.textarea}
               value={formData[slot.name] || ''}
               onChange={(e) => handleChange(slot.name, e.target.value)}
-              rows={slot.type === 'html' ? 8 : 3}
+              rows={8}
             />
+          ) : slot.richContent ? (
+            <Suspense fallback={<div className={styles.loading}>Loading editor...</div>}>
+              <TiptapEditor
+                value={formData[slot.name] || ''}
+                onChange={(value) => handleChange(slot.name, value)}
+              />
+            </Suspense>
           ) : (
             <input
               type="text"

@@ -1,6 +1,5 @@
 import type { TemplateInfo, TemplateSlot } from '../types/template'
 import { FONT_SIZE_PREFIX } from '../types/template'
-import { renderMarkdown } from './markdown'
 
 export function parseTemplate(html: string): TemplateInfo {
   const parser = new DOMParser()
@@ -26,7 +25,7 @@ export function parseTemplate(html: string): TemplateInfo {
 
     const slotTypeAttr = el.getAttribute('data-slot-type')
     const slotStyle = el.getAttribute('data-slot-style')
-    const multiline = el.hasAttribute('data-slot-multiline')
+    const richContent = el.hasAttribute('data-slot-rich-content')
     let slotType: 'text' | 'image' | 'html' = 'text'
     if (slotTypeAttr === 'image') {
       slotType = 'image'
@@ -49,7 +48,7 @@ export function parseTemplate(html: string): TemplateInfo {
 
     // Avoid duplicates
     if (!slots.find((s) => s.name === slotName)) {
-      slots.push({ name: slotName, type: slotType, defaultValue, multiline })
+      slots.push({ name: slotName, type: slotType, defaultValue, richContent })
     }
   })
 
@@ -89,11 +88,12 @@ export function renderCard(template: TemplateInfo, data: Record<string, string>)
 
     if (slotType === 'image') {
       (el as HTMLImageElement).src = data[slotName]
-    } else if (slotType === 'html') {
+    } else if (slotType === 'html' || el.hasAttribute('data-slot-rich-content')) {
+      // HTML slots and rich content slots render HTML directly
       el.innerHTML = data[slotName]
     } else {
-      // Text slots support markdown
-      el.innerHTML = renderMarkdown(data[slotName])
+      // Plain text slots - escape HTML
+      el.textContent = data[slotName]
     }
   })
 
