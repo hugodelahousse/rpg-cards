@@ -30,8 +30,7 @@ export function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onCh
       setFormData(editingCard.data)
       onChange?.(editingCard.data)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editingCard])
+  }, [editingCard, onChange])
 
   const handleChange = (name: string, value: string) => {
     const newData = { ...formData, [name]: value }
