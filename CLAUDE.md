@@ -43,14 +43,7 @@ Templates use `data-slot` attributes to define fillable fields:
 
 The app parses templates to extract slots, generates forms dynamically, and renders cards by filling slot values.
 
-### Template Design Guidelines
-
-When creating or modifying card templates, follow these principles:
-
-- **Prefer large bounding boxes with rich content over multiple slots**: Instead of creating separate slots for related content (e.g., `description` and `abilities`), combine them into a single rich content slot using `data-slot-multiline`. This gives users more flexibility with formatting using the rich text editor.
-- **Use absolute positioning**: Position elements using CSS `position: absolute` with fixed measurements (mm) for precise card layouts that print consistently.
-- **Standard card sizes**: Use 63mm × 88mm (poker/standard) or 70mm × 100mm for card dimensions.
-- **Consolidate related content**: Group flavor text, abilities, and effects into one rich content area rather than fragmenting into multiple text slots.
+See `public/templates/CLAUDE.md` for template design guidelines.
 
 ### Card Data Flow
 
