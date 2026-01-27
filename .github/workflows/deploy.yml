@@ -41,13 +41,10 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Copy SPA fallback for 404 handling
-        run: cp build/client/__spa-fallback.html build/client/404.html
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build/client
+          path: dist
 
   deploy:
     environment:
