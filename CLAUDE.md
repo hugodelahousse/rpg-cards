@@ -43,8 +43,6 @@ Templates use `data-slot` attributes to define fillable fields:
 
 The app parses templates to extract slots, generates forms dynamically, and renders cards by filling slot values.
 
-See `public/templates/CLAUDE.md` for template design guidelines.
-
 ### Card Data Flow
 
 1. User selects/uploads template HTML
