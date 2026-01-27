@@ -7,12 +7,17 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap');
 
+
+    :root {
+      --border-color: oklch(0.91 0.1234 92.95);
+      --background-color: white;
+    }
+
     .card {
-      width: 70mm;
-      height: 100mm;
-      background: linear-gradient(180deg, #0d1b2a 0%, #1b263b 100%);
-      border: 3px solid #c9a227;
-      border-radius: 12px;
+      width: 63mm;
+      height: 88mm;
+      border: 0.5mm solid var(--border-color);
+      border-radius: 3mm;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -23,23 +28,30 @@
     }
 
     .card-image-wrapper {
+      position: absolute;
+      top: 0;
       width: 100%;
       height: 45%;
       overflow: hidden;
-      border-bottom: 2px solid #c9a227;
     }
 
     .card-image {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center top;
+    }
+
+    .divider {
+      position: absolute;
+      top: 34mm;
+      width: 100%;
     }
 
     .card-content {
+      position: absolute;
+      top: 36mm;
       flex: 1;
       padding: 3mm;
-      background: linear-gradient(180deg, #f5e6c8 0%, #e8d4a8 100%);
       display: flex;
       flex-direction: column;
     }
@@ -63,19 +75,19 @@
 
     .card-type {
       font-family: 'Cinzel', serif;
+      position: absolute;
+      left: 43.5mm;
+      top: 3.6mm;
       font-size: 2.2mm;
-      font-weight: 700;
+      font-weight: 400;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #5a4a2a;
-      border: 1.5px solid #c9a227;
+      letter-spacing: 1px;
+      color: black;
       border-radius: 3px;
       padding: 1mm 2mm;
-      background: rgba(201, 162, 39, 0.1);
     }
 
     .card-description {
-      font-style: italic;
       font-size: 2.5mm;
       line-height: 1.4;
       color: #2a2a2a;
@@ -103,16 +115,13 @@
       margin-top: auto;
       padding-top: 1.5mm;
       border-top: 0.5px solid rgba(0, 0, 0, 0.1);
+      padding: 2mm;
     }
 
     .artist-credit {
       display: flex;
       align-items: center;
       gap: 1mm;
-    }
-
-    .pen-icon::before {
-      content: "✎";
     }
 
     .legal-text {
@@ -139,20 +148,21 @@
         alt="Card artwork"
       />
     </div>
+    <img src="https://cardcreator.daggerheart.com/assets/card/ancestry-divider.png" class="divider" />
     <div class="card-content">
       <div class="card-header">
         <h1 class="card-name" data-slot="name">Card Name</h1>
         <span class="card-type" data-slot="type">Type</span>
       </div>
-      <p class="card-description" data-slot="description" data-slot-multiline>
-        Card description goes here. This is italic flavor text that describes the card.
-      </p>
-      <div class="card-abilities" data-slot="abilities" data-slot-multiline>**Ability Name:** Ability description and effects go here.
-
-**Second Ability:** Another ability description goes here.</div>
+      <div class="card-description" data-slot="description" data-slot-multiline>
+        <i>Card description goes here. This is italic flavor text that describes the card.</i>
+        <br>
+        <br>
+        <strong>Ability Name:</strong> Ability description and effects go here.
+        <strong>Second Ability</strong>: Another ability description goes here.
+      </div>
       <div class="card-footer">
         <span class="artist-credit">
-          <span class="pen-icon"></span>
           <span data-slot="artist">Artist Name</span>
         </span>
         <span class="legal-text" data-slot="legal">Daggerheart™ Compatible</span>
