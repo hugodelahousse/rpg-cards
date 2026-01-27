@@ -133,7 +133,7 @@ export function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onCh
                 />
               )}
             </div>
-          ) : slot.richContent ? (
+          ) : slot.multiline ? (
             <Suspense fallback={<div className={styles.loading}>Loading editor...</div>}>
               <TiptapEditor
                 value={formData[slot.name] || ''}

@@ -25,7 +25,7 @@ export function parseTemplate(html: string): TemplateInfo {
 
     const slotTypeAttr = el.getAttribute('data-slot-type')
     const slotStyle = el.getAttribute('data-slot-style')
-    const richContent = el.hasAttribute('data-slot-rich-content')
+    const multiline = el.hasAttribute('data-slot-multiline')
     const slotType: 'text' | 'image' = slotTypeAttr === 'image' ? 'image' : 'text'
 
     let defaultValue = ''
@@ -35,8 +35,8 @@ export function parseTemplate(html: string): TemplateInfo {
       defaultValue = style.getPropertyValue(slotStyle) || ''
     } else if (slotType === 'image') {
       defaultValue = (el as HTMLImageElement).src || ''
-    } else if (richContent) {
-      // Rich content slots store HTML
+    } else if (multiline) {
+      // Multiline slots store HTML
       defaultValue = el.innerHTML?.trim() || ''
     } else {
       defaultValue = el.textContent?.trim() || ''
@@ -44,7 +44,7 @@ export function parseTemplate(html: string): TemplateInfo {
 
     // Avoid duplicates
     if (!slots.find((s) => s.name === slotName)) {
-      slots.push({ name: slotName, type: slotType, defaultValue, richContent })
+      slots.push({ name: slotName, type: slotType, defaultValue, multiline })
     }
   })
 
@@ -84,8 +84,8 @@ export function renderCard(template: TemplateInfo, data: Record<string, string>)
 
     if (slotType === 'image') {
       (el as HTMLImageElement).src = data[slotName]
-    } else if (el.hasAttribute('data-slot-rich-content')) {
-      // Rich content slots render HTML directly
+    } else if (el.hasAttribute('data-slot-multiline')) {
+      // Multiline slots render HTML directly
       el.innerHTML = data[slotName]
     } else {
       // Plain text slots - escape HTML

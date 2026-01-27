@@ -2,7 +2,7 @@ export interface TemplateSlot {
   name: string
   type: 'text' | 'image'
   defaultValue: string
-  richContent?: boolean
+  multiline?: boolean
 }
 
 export interface TemplateInfo {
