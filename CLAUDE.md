@@ -39,6 +39,7 @@ bun run typecheck  # Run TypeScript compiler check
 Templates use `data-slot` attributes to define fillable fields:
 - Text: `<span data-slot="name">Default</span>`
 - Image: `<img data-slot="art" data-slot-type="image" />`
+- Rich content: `<div data-slot="description" data-slot-multiline>HTML content</div>`
 
 The app parses templates to extract slots, generates forms dynamically, and renders cards by filling slot values.
 
