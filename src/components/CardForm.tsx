@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense, lazy } from 'react'
+import { useState, useEffect, Suspense, lazy, useSyncExternalStore } from 'react'
 import type { TemplateSlot, CardData } from '../types/template'
 import { isRpgCardFormat, convertRpgCards } from '../utils/rpgCardConverter'
 import { AlertModal } from './Modal'
@@ -8,6 +8,15 @@ import styles from './CardForm.module.css'
 
 // Lazy load TiptapEditor for better bundle splitting
 const TiptapEditor = lazy(() => import('./TiptapEditor'))
+
+// SSR-safe check for client-side rendering
+const subscribe = () => () => {}
+const getSnapshot = () => true
+const getServerSnapshot = () => false
+
+function useIsClient() {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+}
 
 interface EditingCard {
   id: string
@@ -27,6 +36,7 @@ interface CardFormProps {
 export function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onChange, editingCard, onCancelEdit }: CardFormProps) {
   const [formData, setFormData] = useState<CardData>(() => createDefaultCardData(slots))
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const isClient = useIsClient()
 
   useEffect(() => {
     if (editingCard) {
@@ -141,12 +151,16 @@ export function CardForm({ slots, onSubmit, onImportJSON, onImportRpgCards, onCh
               rows={8}
             />
           ) : slot.richContent ? (
-            <Suspense fallback={<div className={styles.loading}>Loading editor...</div>}>
-              <TiptapEditor
-                value={formData[slot.name] || ''}
-                onChange={(value) => handleChange(slot.name, value)}
-              />
-            </Suspense>
+            isClient ? (
+              <Suspense fallback={<div className={styles.loading}>Loading editor...</div>}>
+                <TiptapEditor
+                  value={formData[slot.name] || ''}
+                  onChange={(value) => handleChange(slot.name, value)}
+                />
+              </Suspense>
+            ) : (
+              <div className={styles.loading}>Loading editor...</div>
+            )
           ) : (
             <input
               type="text"

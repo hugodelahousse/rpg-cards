@@ -4,8 +4,17 @@ import TextAlign from '@tiptap/extension-text-align'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import Underline from '@tiptap/extension-underline'
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useSyncExternalStore } from 'react'
 import styles from './TiptapEditor.module.css'
+
+// SSR-safe check for client-side rendering
+const subscribe = () => () => {}
+const getSnapshot = () => true
+const getServerSnapshot = () => false
+
+function useIsClient() {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+}
 
 interface TiptapEditorProps {
   value: string
@@ -141,6 +150,13 @@ function TiptapEditorInner({ value, onChange }: TiptapEditorProps) {
 }
 
 export function TiptapEditor(props: TiptapEditorProps) {
+  const isClient = useIsClient()
+
+  // Don't render Tiptap during SSR - it doesn't support server rendering
+  if (!isClient) {
+    return <div className={styles.loading}>Loading editor...</div>
+  }
+
   return <TiptapEditorInner {...props} />
 }
 
